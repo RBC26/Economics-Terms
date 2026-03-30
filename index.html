@@ -1,17 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IB Economics HL — Key Terms</title>
-<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-</head>
-<body style="margin:0;padding:0;background:#0f1117">
-<div id="root"></div>
-<script type="text/babel">
-const { useState, useEffect, useCallback, useMemo, useRef } = React;
+import { useState, useEffect, useCallback, useMemo } from "react";
 
 // ─── Concise IB Economics Definitions (verified against IB spec) ───
 const ALL_TERMS = [
@@ -19,13 +6,13 @@ const ALL_TERMS = [
   { id: 2, term: "Absolute advantage", def: "When a country can produce a good using fewer resources than another country." },
   { id: 3, term: "Absolute poverty", def: "The inability to afford a basic standard of living, defined by a nationally or internationally determined poverty line." },
   { id: 4, term: "Abuse of market power", def: "When firms engage in activities that restrict competition in a market." },
-  { id: 5, term: "Actual growth", def: "Growth from reducing unemployment or improving efficiency, shown as movement of a point inside the PPC toward the curve." },
+  { id: 5, term: "Actual growth", def: "An increase in real GDP resulting from the use of previously unemployed or underemployed resources, shown on a PPC diagram as movement from a point inside the curve toward the curve itself." },
   { id: 6, term: "Administrative barriers", def: "Trade protection through administrative procedures like customs inspections and packaging controls that restrict imports." },
-  { id: 7, term: "Adverse selection", def: "A market failure where one party has more information about product quality than the other, leading to underallocation of resources." },
-  { id: 8, term: "Aggregate demand", def: "The total quantity of goods and services all buyers in an economy want to buy at different price levels, ceteris paribus." },
+  { id: 7, term: "Adverse selection", def: "A form of market failure arising from asymmetric information before a transaction, where higher-risk individuals are more likely to participate in a market (e.g. unhealthy people seeking insurance), driving up costs and potentially causing market collapse." },
+  { id: 8, term: "Aggregate demand", def: "The total spending on an economy's goods and services at different price levels, ceteris paribus. Composed of C + I + G + (X − M). AD = C + I + G + (X − M)." },
   { id: 9, term: "Aggregate demand curve", def: "A curve showing the relationship between total real output demanded and the economy's price level." },
   { id: 10, term: "Aggregate supply", def: "The total quantity of goods and services produced in an economy at different price levels, ceteris paribus." },
-  { id: 11, term: "Allocative efficiency", def: "When resources produce the combination of goods most preferred by consumers, achieved where MSB = MSC (or P = MC)." },
+  { id: 11, term: "Allocative efficiency", def: "Occurs when resources are allocated to produce the combination of goods and services most valued by society; achieved where MSB = MSC, or equivalently P = MC in competitive markets." },
   { id: 12, term: "Allocative inefficiency", def: "The absence of allocative efficiency, occurring when MSB ≠ MSC (or P ≠ MC)." },
   { id: 13, term: "Anchoring", def: "A behavioural economics bias where consumers use irrelevant information, often the first piece encountered, to make decisions." },
   { id: 14, term: "Anti-dumping", def: "Trade protection justified when a trading partner sells goods internationally below production cost, which is illegal under trade rules." },
@@ -39,7 +26,7 @@ const ALL_TERMS = [
   { id: 22, term: "Balance of payments", def: "A record of all transactions between a country's residents and those of all other countries, showing credits and debits." },
   { id: 23, term: "Balance of trade in goods", def: "The value of exports of goods minus the value of imports of goods over a specific period." },
   { id: 24, term: "Balance of trade in services", def: "The value of exports of services minus the value of imports of services over a specific period." },
-  { id: 25, term: "Barriers to entry", def: "Anything that prevents a firm from entering an industry, limiting competition." },
+  { id: 25, term: "Barriers to entry", def: "Obstacles that prevent new firms from entering an industry, protecting incumbent firms' market power. Examples: economies of scale, brand loyalty, patents, legal barriers, high startup costs." },
   { id: 26, term: "Behavioural economics", def: "A branch of economics influenced by psychology, based on the idea that human behaviour is more complex than rational choice assumptions." },
   { id: 27, term: "Biases", def: "Systematic errors in thinking from behavioural economics, including rules of thumb, anchoring, framing, and availability." },
   { id: 28, term: "Bilateral trade agreement", def: "A trade agreement to lower barriers between two trading partners, usually two countries." },
@@ -111,7 +98,7 @@ const ALL_TERMS = [
   { id: 94, term: "Economic inequality", def: "The degree to which people differ in their ability to satisfy economic needs, mainly from differences in income and wealth." },
   { id: 95, term: "Economic integration", def: "Economic interdependence between countries achieved by agreements to reduce trade and other barriers between them." },
   { id: 96, term: "Economics", def: "The study of choices leading to the best use of scarce resources to satisfy unlimited human needs and wants." },
-  { id: 97, term: "Economies of scale", def: "Decreases in average costs as a firm increases output in the long run, explaining the downward-sloping portion of the LRATC curve." },
+  { id: 97, term: "Economies of scale", def: "The reduction in long-run average total costs as a firm increases its scale of production. Caused by specialisation, bulk purchasing, indivisibilities, and spreading fixed costs over larger output." },
   { id: 98, term: "Elasticity", def: "A measure of the responsiveness of one variable to changes in another variable's determinants." },
   { id: 99, term: "Entrepreneurship", def: "A factor of production involving innovation, business risk-taking, and organising land, labour and capital." },
   { id: 100, term: "Equilibrium price", def: "The price where quantity demanded equals quantity supplied with no tendency to change." },
@@ -134,7 +121,7 @@ const ALL_TERMS = [
   { id: 117, term: "Floating exchange rate", def: "An exchange rate determined entirely by market forces of supply and demand with no government intervention." },
   { id: 118, term: "Foreign aid", def: "Transfer of funds or goods to developing countries on concessional, non-commercial terms to improve their conditions." },
   { id: 119, term: "Foreign direct investment (FDI)", def: "Investment by firms in one country into productive activities in another, with at least 10% control of the foreign firm." },
-  { id: 120, term: "Framing", def: "A behavioural economics concept about how the presentation of choices influences decisions." },
+  { id: 120, term: "Framing", def: "A behavioural bias where people respond differently to the same objective information depending on how it is presented (e.g. '90% effective' vs '10% failure rate' produces different decisions)." },
   { id: 121, term: "Free rider problem", def: "When people enjoy a good without paying due to non-excludability, meaning private firms fail to produce these goods." },
   { id: 122, term: "Free trade", def: "International trade without any government restrictions or barriers between countries." },
   { id: 123, term: "Free trade area", def: "A trading bloc where members eliminate barriers between themselves but each retains its own policy toward non-members." },
@@ -175,12 +162,12 @@ const ALL_TERMS = [
   { id: 158, term: "Law of demand", def: "As the price of a good increases, quantity demanded falls (and vice versa), ceteris paribus." },
   { id: 159, term: "Law of diminishing marginal returns", def: "As more variable input is added to fixed inputs, marginal product eventually decreases." },
   { id: 160, term: "Law of supply", def: "As the price of a good increases, quantity supplied also increases (and vice versa), ceteris paribus." },
-  { id: 161, term: "Long-run aggregate supply (LRAS)", def: "A vertical curve at full employment GDP showing that long-run output is independent of the price level." },
+  { id: 161, term: "Long-run aggregate supply (LRAS)", def: "A vertical line at the potential (full employment) level of real GDP, showing that in the long run output is determined by the economy's productive capacity — not the price level." },
   { id: 162, term: "Long-term growth", def: "Growth over long periods shown by rightward shifts of LRAS or outward shifts of the PPC." },
   { id: 163, term: "Lorenz curve", def: "A curve showing income distribution by plotting cumulative % of income against cumulative % of population." },
   { id: 164, term: "Marginal benefit", def: "The extra benefit from consuming one more unit of a good." },
   { id: 165, term: "Marginal cost", def: "The extra cost of producing one more unit of output." },
-  { id: 166, term: "Marginal propensity to consume (MPC)", def: "The fraction of additional income spent on domestically produced goods, determining the multiplier size." },
+  { id: 166, term: "Marginal propensity to consume (MPC)", def: "The proportion of additional income households spend on domestically produced goods: MPC = ΔC ÷ ΔY. Determines the size of the Keynesian multiplier: higher MPC → larger multiplier." },
   { id: 167, term: "Marginal revenue", def: "The additional revenue from selling one more unit of output." },
   { id: 168, term: "Marginal social benefit (MSB)", def: "The extra benefit to society from consuming one more unit; equals MPB when no consumption externalities exist." },
   { id: 169, term: "Marginal social cost (MSC)", def: "The extra cost to society from producing one more unit; equals MPC when no production externalities exist." },
@@ -197,7 +184,7 @@ const ALL_TERMS = [
   { id: 180, term: "Monetary union", def: "Countries adopting a single currency and common monetary policy run by a single central bank." },
   { id: 181, term: "Monopolistic competition", def: "A market with many firms, product differentiation, some price control and no barriers to entry." },
   { id: 182, term: "Monopoly", def: "A market with a single dominant firm, significant price control, unique product and high barriers to entry." },
-  { id: 183, term: "Moral hazard", def: "When one party takes risks because the costs of those risks are borne by another party, often in insurance contexts." },
+  { id: 183, term: "Moral hazard", def: "A form of market failure arising from asymmetric information after a transaction, where one party takes on greater risk because they do not bear the full consequences — typically because another party (e.g. an insurer) absorbs the losses." },
   { id: 184, term: "Multinational corporation (MNC)", def: "A firm based in one country that undertakes productive investment in another with at least 10% control." },
   { id: 185, term: "Natural monopoly", def: "A single firm that can supply the entire market at lower average cost than two or more firms due to economies of scale." },
   { id: 186, term: "Natural rate of unemployment", def: "Unemployment at potential output, equal to structural + frictional + seasonal unemployment." },
@@ -207,7 +194,7 @@ const ALL_TERMS = [
   { id: 190, term: "Non-excludable", def: "A characteristic where it's impossible to exclude someone from using a good; a key feature of public goods." },
   { id: 191, term: "Non-rivalrous", def: "A characteristic where one person's consumption doesn't reduce availability for others; a key feature of public goods." },
   { id: 192, term: "Normal good", def: "A good whose demand increases as income increases (positive income elasticity)." },
-  { id: 193, term: "Normal profit", def: "The minimum revenue to keep a firm running, earned when price equals average cost (zero abnormal profit)." },
+  { id: 193, term: "Normal profit", def: "The minimum level of profit (TR = TC including implicit costs) needed to keep a firm in its current industry. Represents the opportunity cost of the entrepreneur's resources." },
   { id: 194, term: "Normative economics", def: "Economics based on value judgements about what ought to be; cannot be proven true or false." },
   { id: 195, term: "Nudge", def: "A method to influence choices predictably without financial incentives, sanctions, or limiting options." },
   { id: 196, term: "Oligopoly", def: "A market with few large interdependent firms, significant price control, differentiated or homogeneous products and high barriers." },
@@ -215,7 +202,7 @@ const ALL_TERMS = [
   { id: 198, term: "Opportunity cost", def: "The value of the next best alternative given up to obtain something." },
   { id: 199, term: "Perfect competition", def: "A market with many small firms, no price control, homogeneous products, no barriers and perfect information." },
   { id: 200, term: "Phillips curve", def: "Shows the relationship between inflation and unemployment; short-run is negative, long-run is vertical at the natural rate." },
-  { id: 201, term: "Pigouvian tax", def: "An indirect tax designed to correct negative externalities of production or consumption." },
+  { id: 201, term: "Pigouvian tax", def: "An indirect tax equal to the marginal external cost of production, designed to internalise a negative externality by raising private cost to equal social cost (MSC), reducing output to the socially optimal level." },
   { id: 202, term: "Positive economics", def: "Economics based on factual statements that can be tested and refuted, forming the basis of theories." },
   { id: 203, term: "Positive externality", def: "When side-effects on third parties are beneficial, creating benefits not reflected in market prices." },
   { id: 204, term: "Potential output", def: "The level of real GDP at full employment where unemployment equals the natural rate." },
@@ -265,7 +252,7 @@ const ALL_TERMS = [
   { id: 248, term: "Trade protection", def: "Government restrictions on imports to protect the domestic economy from foreign competition." },
   { id: 249, term: "Trading bloc", def: "A group of countries that agree to reduce tariff and other trade barriers between them." },
   { id: 250, term: "Transfer payments", def: "Government payments to individuals for income redistribution, supporting vulnerable groups like the elderly and unemployed." },
-  { id: 251, term: "Unemployment", def: "People above working age who are not working and are actively looking for a job." },
+  { id: 251, term: "Unemployment", def: "People of working age who are not currently employed but are actively seeking work and available to start. Includes frictional, structural, seasonal, and cyclical unemployment." },
   { id: 252, term: "Unemployment rate", def: "The number of unemployed divided by the labour force, multiplied by 100." },
   { id: 253, term: "Utility", def: "The satisfaction consumers gain from consuming a good or service." },
   { id: 254, term: "Welfare loss", def: "Loss of social surplus when MSB ≠ MSC, arising from market failure." },
@@ -285,7 +272,7 @@ const loadState = () => {
 const saveState = (s) => localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
 
 // ─── App ───
-function App() {
+export default function App() {
   const [tab, setTab] = useState("terms");
   const [known, setKnown] = useState(() => loadState().known || {});
   const [dailyHistory, setDailyHistory] = useState(() => loadState().dailyHistory || []);
@@ -307,10 +294,17 @@ function App() {
   const [writeScores, setWriteScores] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [flashDeck, setFlashDeck] = useState([]);
+  const [emailAddress, setEmailAddress] = useState(() => { try { return JSON.parse(localStorage.getItem('ib-econ-email') || '""'); } catch { return ''; } });
+  const [emailSaved, setEmailSaved] = useState(false);
+  const [emailLog, setEmailLog] = useState(() => { try { return JSON.parse(localStorage.getItem('ib-econ-emaillog') || '[]'); } catch { return []; } });
+  const [sendingEmail, setSendingEmail] = useState(false);
 
   useEffect(() => {
     saveState({ known, dailyHistory, dailySet, dailyPhase });
   }, [known, dailyHistory, dailySet, dailyPhase]);
+
+  useEffect(() => { localStorage.setItem('ib-econ-email', JSON.stringify(emailAddress)); }, [emailAddress]);
+  useEffect(() => { localStorage.setItem('ib-econ-emaillog', JSON.stringify(emailLog)); }, [emailLog]);
 
   const knownCount = Object.keys(known).filter(k => known[k]).length;
   const totalCount = ALL_TERMS.length;
@@ -402,6 +396,7 @@ function App() {
     { key: "flash", label: "Flashcards", icon: "🃏" },
     { key: "match", label: "Match", icon: "🔗" },
     { key: "write", label: "Define", icon: "✍️" },
+    { key: "email", label: "Reminders", icon: "📧" },
   ];
 
   const filteredTerms = searchQuery
@@ -730,13 +725,80 @@ function App() {
             )}
           </div>
         )}
+
+        {/* ═══ EMAIL REMINDERS TAB ═══ */}
+        {tab === "email" && (
+          <div className="fade-up">
+            <div style={{ marginBottom: 24 }}>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, marginBottom: 6 }}>Daily Email Reminders</h2>
+              <p style={{ fontSize: 13, color: "#6b6d7b", lineHeight: 1.5 }}>Get 8 personalised terms you haven't learnt yet sent to your inbox. Tap the buttons to generate a morning or evening reminder.</p>
+            </div>
+            <div className="card" style={{ marginBottom: 16 }}>
+              <p style={{ fontSize: 13, fontWeight: 600, color: "#c4b99a", marginBottom: 10 }}>📬 Your email address</p>
+              <div style={{ display: "flex", gap: 10 }}>
+                <input type="email" placeholder="you@example.com" value={emailAddress} onChange={e => { setEmailAddress(e.target.value); setEmailSaved(false); }} style={{ flex: 1, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: "10px 14px", color: "#e8e6e1", fontFamily: "inherit", fontSize: 14, outline: "none" }} />
+                <button className="btn btn-primary btn-sm" onClick={() => { setEmailSaved(true); setTimeout(() => setEmailSaved(false), 2000); }}>
+                  {emailSaved ? "✓ Saved" : "Save"}
+                </button>
+              </div>
+            </div>
+            <div className="card" style={{ marginBottom: 16, display: "flex", gap: 24 }}>
+              <div><p style={{ fontSize: 11, color: "#6b6d7b", textTransform: "uppercase", letterSpacing: 2, marginBottom: 4 }}>Progress</p><p style={{ fontSize: 20, fontWeight: 700, color: "#c4b99a" }}>{knownCount}/{totalCount}</p></div>
+              <div><p style={{ fontSize: 11, color: "#6b6d7b", textTransform: "uppercase", letterSpacing: 2, marginBottom: 4 }}>Remaining</p><p style={{ fontSize: 20, fontWeight: 700, color: "#e8e6e1" }}>{totalCount - knownCount}</p></div>
+              <div><p style={{ fontSize: 11, color: "#6b6d7b", textTransform: "uppercase", letterSpacing: 2, marginBottom: 4 }}>Emails</p><p style={{ fontSize: 20, fontWeight: 700, color: "#e8e6e1" }}>{emailLog.length}</p></div>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 20 }}>
+              {["morning", "evening"].map(session => (
+                <div key={session} className="card" style={{ textAlign: "center", padding: 24 }}>
+                  <p style={{ fontSize: 28, marginBottom: 8 }}>{session === "morning" ? "☀️" : "🌙"}</p>
+                  <p style={{ fontSize: 14, fontWeight: 600, color: "#e8e6e1", marginBottom: 4 }}>{session === "morning" ? "Morning Blast" : "Evening Review"}</p>
+                  <p style={{ fontSize: 12, color: "#6b6d7b", marginBottom: 16 }}>8 terms to {session === "morning" ? "start your day" : "review before bed"}</p>
+                  <button className="btn btn-primary" disabled={sendingEmail || !emailAddress} onClick={() => {
+                    if (!emailAddress) { alert("Enter your email first."); return; }
+                    setSendingEmail(true);
+                    const unlearnedTerms = ALL_TERMS.filter(t => !known[t.id]);
+                    const pick = [...unlearnedTerms].sort(() => Math.random() - 0.5).slice(0, 8);
+                    const greetings = { morning: ["Rise and revise,", "Morning grind,", "Good morning!"], evening: ["Evening review time,", "Wind down with econ,", "Before you sleep —"] };
+                    const greeting = greetings[session][Math.floor(Math.random() * greetings[session].length)];
+                    const body = greeting + " here are 8 IB Economics terms:\n\n" + pick.map(t => "📌 " + t.term + "\n   " + t.def).join("\n\n") + "\n\n---\nProgress: " + knownCount + "/" + totalCount + " learnt";
+                    const subject = (session === "morning" ? "☀️ IB Econ Morning" : "🌙 IB Econ Evening") + " — " + new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "short" });
+                    const mailto = "mailto:" + emailAddress + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+                    window.open(mailto, "_blank");
+                    const now = new Date();
+                    setEmailLog(prev => [{ time: now.toLocaleString("en-GB"), session, subject, status: "opened in mail client" }, ...prev].slice(0, 20));
+                    setTimeout(() => setSendingEmail(false), 1000);
+                  }} style={{ width: "100%", opacity: !emailAddress ? 0.5 : 1 }}>
+                    {sendingEmail ? "Opening..." : "Send Now " + (session === "morning" ? "☀️" : "🌙")}
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div className="card" style={{ marginBottom: 16, borderColor: "rgba(196,185,154,0.1)", background: "rgba(196,185,154,0.03)" }}>
+              <p style={{ fontSize: 13, fontWeight: 600, color: "#c4b99a", marginBottom: 6 }}>📌 How this works</p>
+              <p style={{ fontSize: 12, color: "#6b6d7b", lineHeight: 1.65 }}>
+                Tapping "Send Now" opens your email client pre-filled with 8 terms you haven't learnt yet, with your progress stats. For automated daily scheduling, bookmark this page and tap each morning and evening — or set a recurring calendar reminder pointing here.
+              </p>
+            </div>
+            {emailLog.length > 0 && (
+              <div>
+                <p style={{ fontSize: 13, fontWeight: 600, color: "#6b6d7b", marginBottom: 10 }}>📋 Recent activity</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  {emailLog.map((e, i) => (
+                    <div key={i} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: 8, padding: "10px 14px", fontSize: 12 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span style={{ color: e.session === "morning" ? "#f5b84a" : "#b09de0" }}>{e.session === "morning" ? "☀️" : "🌙"} {e.session}</span>
+                        <span style={{ color: "#4a4d5e" }}>{e.time}</span>
+                      </div>
+                      <p style={{ color: "#8a8d9e", marginTop: 3 }}>{e.subject}</p>
+                      <span style={{ fontSize: 10, color: "#80c080" }}>● {e.status}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
 }
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(React.createElement(App));
-</script>
-</body>
-</html>
