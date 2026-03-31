@@ -1,824 +1,1377 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>IB Economics HL — Key Terms</title>
-<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-<style>body{margin:0;padding:0;background:#0f1117}</style>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0f1117;
+    --bg2: #1a1d2e;
+    --gold: #c4b99a;
+    --gold-dim: #8a7d5a;
+    --text: #e8e6e1;
+    --muted: #6b6d7b;
+    --subtle: #a0a3b4;
+    --card-bg: rgba(255,255,255,0.03);
+    --card-border: rgba(255,255,255,0.06);
+    --green: #a0c8a0;
+    --red: #c8a0a0;
+    --purple: #b09de0;
+    --amber: #f5b84a;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    background: linear-gradient(145deg, var(--bg) 0%, var(--bg2) 50%, var(--bg) 100%);
+    color: var(--text);
+    font-family: 'DM Sans', 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    font-size: 15px;
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #2a2d3e; border-radius: 3px; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+  @keyframes flipIn {
+    from { transform: rotateY(90deg); opacity: 0; }
+    to   { transform: rotateY(0); opacity: 1; }
+  }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  .fade-up { animation: fadeUp 0.4s ease-out both; }
+  .shake   { animation: shake 0.3s ease-in-out; }
+
+  /* Layout */
+  #app { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+  /* Header */
+  #header {
+    padding: 28px 0 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .header-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+  .progress-label { font-size: 13px; color: var(--muted); margin-bottom: 4px; text-align: right; }
+  .progress-bar-wrap { width: 160px; height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold-dim), var(--gold)); border-radius: 3px; transition: width 0.5s ease; }
+
+  /* Tabs */
+  #tabs-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: linear-gradient(180deg, var(--bg) 0%, var(--bg) 85%, transparent 100%);
+    padding: 16px 0 0;
+  }
+  #tabs {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  #tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+  .tab-btn:hover { color: var(--gold); background: rgba(196,185,154,0.06); }
+  .tab-btn.active { color: var(--gold); background: rgba(196,185,154,0.1); }
+
+  /* Content area */
+  #content { padding: 20px 0 80px; }
+
+  /* Tab panels */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Cards */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 20px;
+    transition: all 0.2s ease;
+  }
+  .card:hover { border-color: rgba(196,185,154,0.15); }
+
+  /* Buttons */
+  .btn {
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    font-family: inherit;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    font-size: 14px;
+  }
+  .btn:disabled { opacity: 0.4; cursor: default; }
+  .btn-primary {
+    background: rgba(196,185,154,0.15);
+    color: var(--gold);
+    padding: 10px 20px;
+  }
+  .btn-primary:not(:disabled):hover { background: rgba(196,185,154,0.25); }
+  .btn-sm { padding: 6px 14px; font-size: 12px; }
+  .btn-morning {
+    background: rgba(255,180,50,0.12);
+    color: var(--amber);
+    padding: 12px 20px;
+    border: 1px solid rgba(255,180,50,0.2);
+  }
+  .btn-morning:not(:disabled):hover { background: rgba(255,180,50,0.22); }
+  .btn-evening {
+    background: rgba(130,100,200,0.12);
+    color: var(--purple);
+    padding: 12px 20px;
+    border: 1px solid rgba(130,100,200,0.2);
+  }
+  .btn-evening:not(:disabled):hover { background: rgba(130,100,200,0.22); }
+
+  .check-btn {
+    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 1.5px solid #3a3d4e;
+    background: transparent;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: transparent;
+    font-size: 12px;
+  }
+  .check-btn.checked { background: rgba(196,185,154,0.2); border-color: var(--gold); color: var(--gold); }
+  .check-btn:hover { border-color: var(--gold); }
+
+  /* Inputs */
+  input[type="text"], input[type="email"], textarea {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input[type="text"]:focus, input[type="email"]:focus, textarea:focus {
+    border-color: rgba(196,185,154,0.3);
+  }
+  textarea { resize: vertical; }
+
+  /* Terms list */
+  #terms-list { display: flex; flex-direction: column; gap: 6px; }
+  .term-row {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 14px 16px;
+  }
+  .term-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; transition: all 0.2s; }
+  .term-name.known { color: var(--muted); text-decoration: line-through; opacity: 0.6; }
+  .term-def { font-size: 13px; color: #8a8d9e; line-height: 1.55; transition: opacity 0.2s; }
+  .term-def.known { opacity: 0.4; }
+
+  /* Search */
+  #search-wrap { margin-bottom: 16px; }
+  #search-meta { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+
+  /* Flashcard */
+  #flashcard {
+    cursor: pointer;
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 30px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.02);
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  #flashcard.flipped { background: rgba(196,185,154,0.04); }
+  #flash-counter { font-size: 12px; color: var(--muted); margin-bottom: 16px; text-align: center; }
+  #flash-controls { display: flex; gap: 10px; justify-content: center; margin-top: 24px; }
+
+  /* Match */
+  .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .match-col { display: flex; flex-direction: column; gap: 8px; }
+  .match-col-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px; }
+  .match-tile {
+    cursor: pointer;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1.5px solid rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.02);
+    transition: all 0.2s ease;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .match-tile:hover { border-color: rgba(196,185,154,0.2); }
+  .match-tile.selected { border-color: var(--gold); background: rgba(196,185,154,0.08); }
+  .match-tile.matched { border-color: rgba(120,180,120,0.4); background: rgba(120,180,120,0.06); opacity: 0.5; pointer-events: none; }
+  .match-tile.wrong { border-color: rgba(200,100,100,0.5); animation: shake 0.3s ease; }
+
+  /* Quiz options */
+  .quiz-option {
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    border: 1.5px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    background: rgba(255,255,255,0.02);
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 13px;
+    color: #c0c3d4;
+    line-height: 1.5;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    margin-bottom: 8px;
+  }
+  .quiz-option:not(:disabled):hover { border-color: rgba(196,185,154,0.2); background: rgba(196,185,154,0.04); }
+  .quiz-option.correct { border-color: rgba(120,180,120,0.3); background: rgba(120,180,120,0.08); }
+  .quiz-option.wrong-pick { border-color: rgba(200,100,100,0.3); background: rgba(200,100,100,0.08); }
+  .quiz-option:disabled { cursor: default; }
+
+  /* Daily quiz progress dots */
+  .quiz-dots { display: flex; gap: 4px; }
+  .quiz-dot { width: 24px; height: 4px; border-radius: 2px; transition: background 0.3s; }
+
+  /* Write/Define */
+  #write-score-badge {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  /* Email reminders */
+  .stats-row { display: flex; gap: 24px; }
+  .stat-item {}
+  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px; }
+  .stat-value { font-size: 20px; font-weight: 700; color: var(--gold); }
+  .stat-value.plain { color: var(--text); }
+
+  .send-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .send-card { text-align: center; padding: 24px; }
+
+  .log-entry {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  /* Toggle */
+  .toggle-wrap { display: flex; align-items: center; gap: 10px; }
+  .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: rgba(255,255,255,0.08);
+    border-radius: 24px;
+    transition: 0.3s;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+    background: var(--muted);
+    border-radius: 50%;
+    transition: 0.3s;
+  }
+  .toggle-switch input:checked + .slider { background: rgba(196,185,154,0.25); border-color: rgba(196,185,154,0.4); }
+  .toggle-switch input:checked + .slider:before { transform: translateX(20px); background: var(--gold); }
+
+  /* Center utility */
+  .center { text-align: center; }
+  .big-emoji { font-size: 48px; margin-bottom: 12px; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 8px; }
+  .section-sub { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+
+  /* Spacing helpers */
+  .mb4  { margin-bottom: 4px; }
+  .mb6  { margin-bottom: 6px; }
+  .mb8  { margin-bottom: 8px; }
+  .mb10 { margin-bottom: 10px; }
+  .mb12 { margin-bottom: 12px; }
+  .mb16 { margin-bottom: 16px; }
+  .mb20 { margin-bottom: 20px; }
+  .mb24 { margin-bottom: 24px; }
+  .mt8  { margin-top: 8px; }
+  .mt16 { margin-top: 16px; }
+  .mt20 { margin-top: 20px; }
+  .mt24 { margin-top: 24px; }
+
+  @media (max-width: 600px) {
+    h1 { font-size: 22px; }
+    .match-grid { grid-template-columns: 1fr; }
+    .send-grid { grid-template-columns: 1fr; }
+    .stats-row { flex-wrap: wrap; }
+  }
+</style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
-const { useState, useEffect, useCallback, useMemo, useRef } = React;
 
-// ─── Concise IB Economics Definitions (verified against IB spec) ───
-const ALL_TERMS = [
-  { id: 1, term: "Abnormal profit", def: "When a firm's total revenue exceeds total costs, meaning price is greater than average cost." },
-  { id: 2, term: "Absolute advantage", def: "When a country can produce a good using fewer resources than another country." },
-  { id: 3, term: "Absolute poverty", def: "The inability to afford a basic standard of living, defined by a nationally or internationally determined poverty line." },
-  { id: 4, term: "Abuse of market power", def: "When firms engage in activities that restrict competition in a market." },
-  { id: 5, term: "Actual growth", def: "An increase in real GDP resulting from the use of previously unemployed or underemployed resources, shown on a PPC diagram as movement from a point inside the curve toward the curve itself." },
-  { id: 6, term: "Administrative barriers", def: "Trade protection through administrative procedures like customs inspections and packaging controls that restrict imports." },
-  { id: 7, term: "Adverse selection", def: "A form of market failure arising from asymmetric information before a transaction, where higher-risk individuals are more likely to participate in a market (e.g. unhealthy people seeking insurance), driving up costs and potentially causing market collapse." },
-  { id: 8, term: "Aggregate demand", def: "The total spending on an economy's goods and services at different price levels, ceteris paribus. Composed of C + I + G + (X − M). AD = C + I + G + (X − M)." },
-  { id: 9, term: "Aggregate demand curve", def: "A curve showing the relationship between total real output demanded and the economy's price level." },
-  { id: 10, term: "Aggregate supply", def: "The total quantity of goods and services produced in an economy at different price levels, ceteris paribus." },
-  { id: 11, term: "Allocative efficiency", def: "Occurs when resources are allocated to produce the combination of goods and services most valued by society; achieved where MSB = MSC, or equivalently P = MC in competitive markets." },
-  { id: 12, term: "Allocative inefficiency", def: "The absence of allocative efficiency, occurring when MSB ≠ MSC (or P ≠ MC)." },
-  { id: 13, term: "Anchoring", def: "A behavioural economics bias where consumers use irrelevant information, often the first piece encountered, to make decisions." },
-  { id: 14, term: "Anti-dumping", def: "Trade protection justified when a trading partner sells goods internationally below production cost, which is illegal under trade rules." },
-  { id: 15, term: "Appreciation", def: "An increase in a currency's value under a floating or managed exchange rate system." },
-  { id: 16, term: "Appropriate technology", def: "Technologies suited to a country's economic, geographical and climate conditions, often labour-intensive methods for developing countries." },
-  { id: 17, term: "Asymmetric information", def: "A market failure where buyers and sellers have unequal access to information, usually causing underallocation of resources." },
-  { id: 18, term: "Automatic stabilisers", def: "Factors like progressive taxes and unemployment benefits that automatically reduce business cycle fluctuations without government action." },
-  { id: 19, term: "Average costs", def: "Cost per unit of output, calculated by dividing total cost by the number of units produced." },
-  { id: 20, term: "Average revenue", def: "Revenue per unit of output sold, calculated by dividing total revenue by units produced." },
-  { id: 21, term: "Average tax rate", def: "Tax paid divided by total income, expressed as a percentage." },
-  { id: 22, term: "Balance of payments", def: "A record of all transactions between a country's residents and those of all other countries, showing credits and debits." },
-  { id: 23, term: "Balance of trade in goods", def: "The value of exports of goods minus the value of imports of goods over a specific period." },
-  { id: 24, term: "Balance of trade in services", def: "The value of exports of services minus the value of imports of services over a specific period." },
-  { id: 25, term: "Barriers to entry", def: "Obstacles that prevent new firms from entering an industry, protecting incumbent firms' market power. Examples: economies of scale, brand loyalty, patents, legal barriers, high startup costs." },
-  { id: 26, term: "Behavioural economics", def: "A branch of economics influenced by psychology, based on the idea that human behaviour is more complex than rational choice assumptions." },
-  { id: 27, term: "Biases", def: "Systematic errors in thinking from behavioural economics, including rules of thumb, anchoring, framing, and availability." },
-  { id: 28, term: "Bilateral trade agreement", def: "A trade agreement to lower barriers between two trading partners, usually two countries." },
-  { id: 29, term: "Bounded rationality", def: "The idea that consumers are rational only within limits due to insufficient information and cognitive limitations." },
-  { id: 30, term: "Bounded self-control", def: "The idea that people exercise self-control only within limits, lacking the discipline for fully rational decisions." },
-  { id: 31, term: "Bounded selfishness", def: "The idea that people are selfish only within limits, as self-interest cannot explain all selfless behaviour." },
-  { id: 32, term: "Budget deficit", def: "When government tax revenues are less than government expenditures over a specific period." },
-  { id: 33, term: "Budget surplus", def: "When government tax revenues are greater than government expenditures over a specific period." },
-  { id: 34, term: "Business confidence", def: "A measure of firm optimism about future economic performance, an important determinant of investment spending." },
-  { id: 35, term: "Business cycle", def: "Fluctuations in real GDP growth, consisting of alternating periods of expansion and contraction." },
-  { id: 36, term: "Capital", def: "A factor of production that has itself been produced, including machinery, tools, equipment and buildings (physical capital)." },
-  { id: 37, term: "Capital account", def: "Part of the balance of payments recording inflows minus outflows for capital transfers and non-produced natural resources." },
-  { id: 38, term: "Capital expenditures", def: "Government spending on public investments like roads, airports, school buildings and hospitals." },
-  { id: 39, term: "Capital flight", def: "Large-scale transfer of private financial capital to another country due to fear and uncertainty about domestic assets." },
-  { id: 40, term: "Carbon tax", def: "A tax per unit of carbon emissions from fossil fuels, used as a policy to address climate change." },
-  { id: 41, term: "Central bank", def: "A financial institution responsible for regulating the financial system, commercial banks, and carrying out monetary policy." },
-  { id: 42, term: "Ceteris paribus", def: "Latin for 'other things being equal' — all variables other than those being studied are assumed constant." },
-  { id: 43, term: "Choice architecture", def: "The design of environments in which people make choices, based on the idea that how options are presented influences decisions." },
-  { id: 44, term: "Circular economy", def: "The idea that goods should be produced to be repairable using biological materials, preventing pollution when discarded." },
-  { id: 45, term: "Circular flow of income", def: "A model where the value of output equals total income generated, which equals expenditures to purchase that output." },
-  { id: 46, term: "Classical economics", def: "19th century ideas that markets working on their own through supply and demand could solve economic problems efficiently." },
-  { id: 47, term: "Collective self-governance", def: "A solution to common pool resource depletion where users take control and manage resources sustainably through agreed rules." },
-  { id: 48, term: "Collusion", def: "An agreement among firms to fix prices or divide the market to limit competition and maximise profit, usually in oligopoly." },
-  { id: 49, term: "Collusive oligopoly", def: "An oligopoly where firms agree to restrict output or fix prices to increase market power and profits." },
-  { id: 50, term: "Common market", def: "A customs union that additionally eliminates restrictions on factor movements (mainly labour and capital) between members." },
-  { id: 51, term: "Common pool resources", def: "Resources not owned by anyone, with no price, available for anyone to use — their depletion leads to environmental unsustainability." },
-  { id: 52, term: "Comparative advantage", def: "When a country has a lower opportunity cost in producing a good than another country, forming the basis of trade theory." },
-  { id: 53, term: "Competition", def: "When many buyers and sellers act independently so that no one can influence the market price." },
-  { id: 54, term: "Competitive market equilibrium", def: "The equilibrium at the intersection of demand and supply curves in a free competitive market without government intervention." },
-  { id: 55, term: "Competitive supply", def: "When two goods compete for the same resources, so producing more of one means producing less of the other." },
-  { id: 56, term: "Complements", def: "Goods that tend to be used together — an increase in the price of one leads to a decrease in demand for the other." },
-  { id: 57, term: "Composite indicator", def: "A summary measure of multiple indicators, like the HDI which measures income, education and health." },
-  { id: 58, term: "Concentration ratio", def: "The percentage of output produced by the largest firms in an industry, indicating the degree of market power." },
-  { id: 59, term: "Consumer confidence", def: "A measure of consumer optimism about future income and the economy, an important determinant of consumption spending." },
-  { id: 60, term: "Consumer price index", def: "A measure of the cost of living comparing the value of a basket of goods in one year with the same basket in a base year." },
-  { id: 61, term: "Consumer surplus", def: "The difference between what consumers are willing to pay and the price actually paid, shown as area under the demand curve above price." },
-  { id: 62, term: "Consumption", def: "Spending by households on goods and services, excluding spending on housing." },
-  { id: 63, term: "Contractionary fiscal policy", def: "Fiscal policy to combat inflation, involving decreased government spending or increased taxes (or both)." },
-  { id: 64, term: "Contractionary monetary policy", def: "Monetary policy to combat inflation, involving an increase in interest rates to lower investment and consumption." },
-  { id: 65, term: "Corporate social responsibility", def: "When corporations avoid socially undesirable activities and undertake desirable ones like supporting human rights." },
-  { id: 66, term: "Cost-push inflation", def: "Inflation caused by a fall in aggregate supply from increased production costs, shown as a leftward shift of the AS curve." },
-  { id: 67, term: "Costs of production", def: "Payments by firms to obtain and use factors of production in their production process." },
-  { id: 68, term: "Crowding out", def: "When increased government borrowing raises interest rates, reducing private investment and offsetting expansionary fiscal policy." },
-  { id: 69, term: "Current account", def: "Part of the balance of payments including balance of trade, services, income flows and current transfers." },
-  { id: 70, term: "Current account deficit", def: "When the current account balance is negative, meaning debits exceed credits." },
-  { id: 71, term: "Current account surplus", def: "When the current account balance is positive, meaning credits exceed debits." },
-  { id: 72, term: "Customs union", def: "A trading bloc where members eliminate trade barriers between themselves and adopt a common external trade policy." },
-  { id: 73, term: "Cyclical unemployment", def: "Unemployment during business cycle downturns, caused by declining aggregate demand (also called demand-deficient unemployment)." },
-  { id: 74, term: "Debt relief", def: "The cancellation or forgiveness of all or a portion of a country's debt." },
-  { id: 75, term: "Default choice", def: "A behavioural economics term for the option that results when a person takes no action." },
-  { id: 76, term: "Deflation", def: "A sustained decrease in the general price level." },
-  { id: 77, term: "Demand", def: "The quantities of a good consumers are willing and able to buy at different prices during a time period, ceteris paribus." },
-  { id: 78, term: "Demand curve", def: "A curve showing the negative relationship between the price of a good and the quantity demanded, ceteris paribus." },
-  { id: 79, term: "Demand management", def: "Policies focusing on influencing aggregate demand to achieve price stability, full employment and economic growth." },
-  { id: 80, term: "Demand-pull inflation", def: "Inflation caused by an increase in aggregate demand, shown as a rightward shift in the AD curve." },
-  { id: 81, term: "Demand-side policies", def: "Fiscal and monetary policies that shift aggregate demand to achieve macroeconomic objectives and minimise business cycle severity." },
-  { id: 82, term: "Demerit goods", def: "Goods considered undesirable that are overprovided by the market due to negative externalities or consumer ignorance." },
-  { id: 83, term: "Depreciation (currency)", def: "A decrease in a currency's value under a floating or managed exchange rate system." },
-  { id: 84, term: "Deregulation", def: "Eliminating or reducing government regulation of private sector activities to promote competition and efficiency." },
-  { id: 85, term: "Determinants of aggregate demand", def: "Factors causing shifts of the AD curve, including influences on consumption, investment, government spending and net exports." },
-  { id: 86, term: "Devaluation", def: "A decrease in a currency's value under a fixed or pegged exchange rate system." },
-  { id: 87, term: "Development aid", def: "Foreign aid intended to help less developed countries with growth and development, contrasted with humanitarian aid." },
-  { id: 88, term: "Direct taxes", def: "Taxes paid directly to government by the taxpayer, including personal income taxes, corporate taxes and wealth taxes." },
-  { id: 89, term: "Disinflation", def: "A fall in the rate of inflation (still positive inflation), not to be confused with deflation." },
-  { id: 90, term: "Distribution of income", def: "How an economy's total income is shared among different individuals or groups, answering the 'for whom' question." },
-  { id: 91, term: "Diversification", def: "Increasing the variety of goods and services produced or exported by a country; the opposite of specialisation." },
-  { id: 92, term: "Economic development", def: "Broad-based rises in living standards including increasing incomes, reducing poverty, inequality and unemployment, and improving access to services." },
-  { id: 93, term: "Economic growth", def: "Increases in real GDP over time, or increases in real GDP per capita." },
-  { id: 94, term: "Economic inequality", def: "The degree to which people differ in their ability to satisfy economic needs, mainly from differences in income and wealth." },
-  { id: 95, term: "Economic integration", def: "Economic interdependence between countries achieved by agreements to reduce trade and other barriers between them." },
-  { id: 96, term: "Economics", def: "The study of choices leading to the best use of scarce resources to satisfy unlimited human needs and wants." },
-  { id: 97, term: "Economies of scale", def: "The reduction in long-run average total costs as a firm increases its scale of production. Caused by specialisation, bulk purchasing, indivisibilities, and spreading fixed costs over larger output." },
-  { id: 98, term: "Elasticity", def: "A measure of the responsiveness of one variable to changes in another variable's determinants." },
-  { id: 99, term: "Entrepreneurship", def: "A factor of production involving innovation, business risk-taking, and organising land, labour and capital." },
-  { id: 100, term: "Equilibrium price", def: "The price where quantity demanded equals quantity supplied with no tendency to change." },
-  { id: 101, term: "Equilibrium quantity", def: "The quantity bought and sold when a market is in equilibrium (Qd = Qs)." },
-  { id: 102, term: "Equity", def: "The condition of being fair or just, often used in connection with income distribution." },
-  { id: 103, term: "Excess demand", def: "When quantity demanded exceeds quantity supplied, creating a shortage." },
-  { id: 104, term: "Excess supply", def: "When quantity supplied exceeds quantity demanded, creating a surplus." },
-  { id: 105, term: "Exchange rate", def: "The rate at which one currency can be exchanged for another — the 'price' of a currency in terms of another." },
-  { id: 106, term: "Excludable", def: "A characteristic of goods where people can be excluded from using them by charging a price." },
-  { id: 107, term: "Expansionary fiscal policy", def: "Fiscal policy to combat recession, involving increased government spending or decreased taxes (or both)." },
-  { id: 108, term: "Expansionary monetary policy", def: "Monetary policy to combat recession, involving a decrease in interest rates to boost investment and consumption." },
-  { id: 109, term: "Expenditure approach", def: "Measuring aggregate output by adding all spending on final goods: C + I + G + (X − M)." },
-  { id: 110, term: "Export promotion", def: "A growth strategy where a country achieves economic growth by expanding exports, looking toward foreign markets." },
-  { id: 111, term: "Export subsidy", def: "A government payment to producers per unit of a good that is exported." },
-  { id: 112, term: "Externality", def: "When actions of consumers or producers create positive or negative side-effects on third parties not involved in the transaction." },
-  { id: 113, term: "Factors of production", def: "All resources used to produce goods and services: land, labour, capital and entrepreneurship." },
-  { id: 114, term: "Financial account", def: "Part of the balance of payments recording flows from FDI, portfolio investment, reserve assets and official borrowing." },
-  { id: 115, term: "Fiscal policy", def: "Government manipulation of its expenditures and taxes to influence aggregate demand; a demand-side policy." },
-  { id: 116, term: "Fixed exchange rate", def: "An exchange rate fixed by the central bank that doesn't change with market supply and demand." },
-  { id: 117, term: "Floating exchange rate", def: "An exchange rate determined entirely by market forces of supply and demand with no government intervention." },
-  { id: 118, term: "Foreign aid", def: "Transfer of funds or goods to developing countries on concessional, non-commercial terms to improve their conditions." },
-  { id: 119, term: "Foreign direct investment (FDI)", def: "Investment by firms in one country into productive activities in another, with at least 10% control of the foreign firm." },
-  { id: 120, term: "Framing", def: "A behavioural bias where people respond differently to the same objective information depending on how it is presented (e.g. '90% effective' vs '10% failure rate' produces different decisions)." },
-  { id: 121, term: "Free rider problem", def: "When people enjoy a good without paying due to non-excludability, meaning private firms fail to produce these goods." },
-  { id: 122, term: "Free trade", def: "International trade without any government restrictions or barriers between countries." },
-  { id: 123, term: "Free trade area", def: "A trading bloc where members eliminate barriers between themselves but each retains its own policy toward non-members." },
-  { id: 124, term: "Frictional unemployment", def: "Short-term unemployment when workers are between jobs, searching for work or waiting to start a new position." },
-  { id: 125, term: "Full employment", def: "In the AD-AS model, the natural rate of unemployment when the economy produces at potential output." },
-  { id: 126, term: "Gains from trade", def: "Benefits from international trade when countries specialise according to comparative advantage, increasing output and surplus." },
-  { id: 127, term: "Game theory", def: "A mathematical technique analysing strategic behaviour of interdependent decision-makers, often applied to oligopoly." },
-  { id: 128, term: "GDP per capita", def: "Gross domestic product divided by population, indicating domestic output per person." },
-  { id: 129, term: "Gini coefficient", def: "A measure of income inequality from 0 (perfect equality) to 1 (perfect inequality), derived from the Lorenz curve." },
-  { id: 130, term: "Globalisation", def: "Increasing worldwide interconnectedness in trade, finance, investment, technology, ideas and culture." },
-  { id: 131, term: "GNI per capita", def: "Gross national income divided by population, indicating income per person." },
-  { id: 132, term: "Government debt", def: "The government's accumulated budget deficits minus surpluses — the total owed to all creditors (national debt)." },
-  { id: 133, term: "Government intervention", def: "When the government interferes in markets to achieve economic or social objectives." },
-  { id: 134, term: "Gross domestic product (GDP)", def: "The market value of all final goods and services produced within a country during a given time period." },
-  { id: 135, term: "Gross national income (GNI)", def: "Total income received by a country's residents: GDP plus income from abroad minus income sent abroad." },
-  { id: 136, term: "Human capital", def: "Skills, abilities, knowledge and health acquired by people that make them more productive." },
-  { id: 137, term: "Human Development Index (HDI)", def: "A composite development indicator measuring income per capita, health and educational attainment." },
-  { id: 138, term: "Import substitution", def: "A growth strategy where a country manufactures consumer goods domestically behind protective trade barriers." },
-  { id: 139, term: "Income effect", def: "Part of the law of demand: as price falls, real income rises, causing consumers to buy more." },
-  { id: 140, term: "Income elasticity of demand", def: "Responsiveness of demand to income changes, measured as % change in Qd ÷ % change in income." },
-  { id: 141, term: "Indirect taxes", def: "Taxes on spending levied on goods and services, paid to government by suppliers rather than directly by consumers." },
-  { id: 142, term: "Infant industry", def: "A new domestic industry unable to compete with established foreign firms, a key argument for trade protection." },
-  { id: 143, term: "Inferior good", def: "A good whose demand decreases as income increases (negative income elasticity)." },
-  { id: 144, term: "Inflation", def: "A sustained increase in the general price level." },
-  { id: 145, term: "Inflation targeting", def: "Monetary policy focused on achieving a specific inflation target rather than broader goals." },
-  { id: 146, term: "Inflationary gap", def: "When real GDP exceeds potential GDP and unemployment is below the natural rate." },
-  { id: 147, term: "Informal economy", def: "Unregistered and legally unregulated economic activities, particularly important in developing countries." },
-  { id: 148, term: "Infrastructure", def: "Physical capital like roads, power, telecoms, ports and water supplies that lower production costs and boost productivity." },
-  { id: 149, term: "Interest rate", def: "Interest expressed as a percentage of the amount borrowed; changes in interest rates form the basis of monetary policy." },
-  { id: 150, term: "Interventionist supply-side policy", def: "Government intervention to shift LRAS right, such as industrial policy, education investment or infrastructure spending." },
-  { id: 151, term: "Investment", def: "Spending by firms or government on capital goods (buildings, machinery, equipment) and new construction." },
-  { id: 152, term: "J-curve effect", def: "A currency depreciation may initially worsen the trade balance before improving it, if the Marshall-Lerner condition holds." },
-  { id: 153, term: "Keynesian multiplier", def: "The ratio showing how an initial change in spending creates a larger change in real GDP, equal to 1/(1−MPC)." },
-  { id: 154, term: "Labour", def: "A factor of production: the physical and mental effort people contribute to producing goods and services." },
-  { id: 155, term: "Labour market flexibility", def: "The operation of market forces in the labour market, achieved by reducing interference like minimum wages." },
-  { id: 156, term: "Laissez-faire", def: "A free market economy without government intervention, as advocated by Adam Smith." },
-  { id: 157, term: "Land", def: "A factor of production including all natural resources: agricultural land, minerals, oil, forests, rivers and lakes." },
-  { id: 158, term: "Law of demand", def: "As the price of a good increases, quantity demanded falls (and vice versa), ceteris paribus." },
-  { id: 159, term: "Law of diminishing marginal returns", def: "As more variable input is added to fixed inputs, marginal product eventually decreases." },
-  { id: 160, term: "Law of supply", def: "As the price of a good increases, quantity supplied also increases (and vice versa), ceteris paribus." },
-  { id: 161, term: "Long-run aggregate supply (LRAS)", def: "A vertical line at the potential (full employment) level of real GDP, showing that in the long run output is determined by the economy's productive capacity — not the price level." },
-  { id: 162, term: "Long-term growth", def: "Growth over long periods shown by rightward shifts of LRAS or outward shifts of the PPC." },
-  { id: 163, term: "Lorenz curve", def: "A curve showing income distribution by plotting cumulative % of income against cumulative % of population." },
-  { id: 164, term: "Marginal benefit", def: "The extra benefit from consuming one more unit of a good." },
-  { id: 165, term: "Marginal cost", def: "The extra cost of producing one more unit of output." },
-  { id: 166, term: "Marginal propensity to consume (MPC)", def: "The proportion of additional income households spend on domestically produced goods: MPC = ΔC ÷ ΔY. Determines the size of the Keynesian multiplier: higher MPC → larger multiplier." },
-  { id: 167, term: "Marginal revenue", def: "The additional revenue from selling one more unit of output." },
-  { id: 168, term: "Marginal social benefit (MSB)", def: "The extra benefit to society from consuming one more unit; equals MPB when no consumption externalities exist." },
-  { id: 169, term: "Marginal social cost (MSC)", def: "The extra cost to society from producing one more unit; equals MPC when no production externalities exist." },
-  { id: 170, term: "Market equilibrium", def: "When quantity demanded equals quantity supplied with no tendency for price or quantity to change." },
-  { id: 171, term: "Market failure", def: "When the market fails to allocate resources efficiently, producing too much or too little from society's perspective." },
-  { id: 172, term: "Market power", def: "A firm's ability to influence its product's price, charging a price greater than marginal cost (P > MC)." },
-  { id: 173, term: "Market-based supply-side policy", def: "Policies promoting competitive markets to shift LRAS right, including labour reforms, competition policy and tax cuts." },
-  { id: 174, term: "Marshall-Lerner condition", def: "Currency depreciation improves the trade balance only if the sum of PED for imports and exports exceeds 1." },
-  { id: 175, term: "Merit goods", def: "Desirable goods underprovided by the market due to positive externalities, inability to pay, or consumer ignorance." },
-  { id: 176, term: "Microfinance", def: "Small loans to people without access to traditional credit, important for poverty reduction in developing countries." },
-  { id: 177, term: "Minimum wage", def: "A government-set minimum price of labour to ensure low-skilled workers can access basic goods; a type of price floor." },
-  { id: 178, term: "Mixed economy", def: "An economy combining government decision-making with private sector decision-making for resource allocation." },
-  { id: 179, term: "Monetary policy", def: "Central bank policy to change interest rates to influence aggregate demand; a demand-side policy." },
-  { id: 180, term: "Monetary union", def: "Countries adopting a single currency and common monetary policy run by a single central bank." },
-  { id: 181, term: "Monopolistic competition", def: "A market with many firms, product differentiation, some price control and no barriers to entry." },
-  { id: 182, term: "Monopoly", def: "A market with a single dominant firm, significant price control, unique product and high barriers to entry." },
-  { id: 183, term: "Moral hazard", def: "A form of market failure arising from asymmetric information after a transaction, where one party takes on greater risk because they do not bear the full consequences — typically because another party (e.g. an insurer) absorbs the losses." },
-  { id: 184, term: "Multinational corporation (MNC)", def: "A firm based in one country that undertakes productive investment in another with at least 10% control." },
-  { id: 185, term: "Natural monopoly", def: "A single firm that can supply the entire market at lower average cost than two or more firms due to economies of scale." },
-  { id: 186, term: "Natural rate of unemployment", def: "Unemployment at potential output, equal to structural + frictional + seasonal unemployment." },
-  { id: 187, term: "Negative externality", def: "When the side-effects on third parties are harmful, creating costs not reflected in market prices." },
-  { id: 188, term: "Net exports", def: "The value of exports minus the value of imports." },
-  { id: 189, term: "Nominal GDP", def: "GDP measured at current prices, not accounting for price level changes." },
-  { id: 190, term: "Non-excludable", def: "A characteristic where it's impossible to exclude someone from using a good; a key feature of public goods." },
-  { id: 191, term: "Non-rivalrous", def: "A characteristic where one person's consumption doesn't reduce availability for others; a key feature of public goods." },
-  { id: 192, term: "Normal good", def: "A good whose demand increases as income increases (positive income elasticity)." },
-  { id: 193, term: "Normal profit", def: "The minimum level of profit (TR = TC including implicit costs) needed to keep a firm in its current industry. Represents the opportunity cost of the entrepreneur's resources." },
-  { id: 194, term: "Normative economics", def: "Economics based on value judgements about what ought to be; cannot be proven true or false." },
-  { id: 195, term: "Nudge", def: "A method to influence choices predictably without financial incentives, sanctions, or limiting options." },
-  { id: 196, term: "Oligopoly", def: "A market with few large interdependent firms, significant price control, differentiated or homogeneous products and high barriers." },
-  { id: 197, term: "Open market operations", def: "The central bank buying and selling bonds to commercial banks to influence money supply and interest rates." },
-  { id: 198, term: "Opportunity cost", def: "The value of the next best alternative given up to obtain something." },
-  { id: 199, term: "Perfect competition", def: "A market with many small firms, no price control, homogeneous products, no barriers and perfect information." },
-  { id: 200, term: "Phillips curve", def: "Shows the relationship between inflation and unemployment; short-run is negative, long-run is vertical at the natural rate." },
-  { id: 201, term: "Pigouvian tax", def: "An indirect tax equal to the marginal external cost of production, designed to internalise a negative externality by raising private cost to equal social cost (MSC), reducing output to the socially optimal level." },
-  { id: 202, term: "Positive economics", def: "Economics based on factual statements that can be tested and refuted, forming the basis of theories." },
-  { id: 203, term: "Positive externality", def: "When side-effects on third parties are beneficial, creating benefits not reflected in market prices." },
-  { id: 204, term: "Potential output", def: "The level of real GDP at full employment where unemployment equals the natural rate." },
-  { id: 205, term: "Poverty cycle", def: "When low income leads to low savings, low investment, low productivity and low growth, transmitting poverty across generations." },
-  { id: 206, term: "Price ceiling", def: "A government-set maximum price below equilibrium, resulting in a shortage of the product." },
-  { id: 207, term: "Price elasticity of demand (PED)", def: "Responsiveness of quantity demanded to price changes: % change in Qd ÷ % change in P. PED > 1 is elastic, < 1 is inelastic." },
-  { id: 208, term: "Price elasticity of supply (PES)", def: "Responsiveness of quantity supplied to price changes: % change in Qs ÷ % change in P. PES > 1 is elastic, < 1 is inelastic." },
-  { id: 209, term: "Price floor", def: "A government-set minimum price above equilibrium, resulting in a surplus of the product." },
-  { id: 210, term: "Price mechanism", def: "The system where prices determined by supply and demand in competitive markets allocate resources." },
-  { id: 211, term: "Producer surplus", def: "The difference between the price received and the lowest price firms would accept, shown as area above supply curve below price." },
-  { id: 212, term: "Product differentiation", def: "When firms make their product different from competitors through physical, quality, location or image differences." },
-  { id: 213, term: "Production possibilities curve (PPC)", def: "A curve showing all maximum output combinations of two goods given fixed resources, technology and full employment." },
-  { id: 214, term: "Profit maximisation", def: "The goal of producing where MC = MR, maximising the gap between total revenue and total costs." },
-  { id: 215, term: "Progressive taxation", def: "Taxation where the fraction of income paid as tax increases as income increases." },
-  { id: 216, term: "Proportional taxation", def: "Taxation where the fraction of income paid as tax stays constant as income increases." },
-  { id: 217, term: "Public good", def: "A good that is non-rivalrous and non-excludable, provided by government because firms have no incentive to produce it." },
-  { id: 218, term: "Purchasing power parity (PPP)", def: "Exchange rates that equalise the buying power of currencies, eliminating price level differences for cross-country comparisons." },
-  { id: 219, term: "Quantitative easing", def: "The central bank buying bonds on a large scale to increase money supply and support commercial bank lending." },
-  { id: 220, term: "Quota", def: "A trade protection setting a legal limit on the quantity of a good that can be imported over a period." },
-  { id: 221, term: "Real GDP", def: "GDP measured in constant (base year) prices, allowing meaningful comparisons over time by removing price changes." },
-  { id: 222, term: "Recession", def: "An economic contraction with falling real GDP and rising unemployment lasting six months or more." },
-  { id: 223, term: "Recessionary gap", def: "When real GDP is below potential GDP and unemployment exceeds the natural rate." },
-  { id: 224, term: "Redistribution of income", def: "Changing the distribution of income through government policies like taxes and transfer payments." },
-  { id: 225, term: "Regressive taxation", def: "Taxation where the fraction of income paid as tax decreases as income increases." },
-  { id: 226, term: "Relative poverty", def: "Inability to afford an adequate standard relative to what is typical in society, often defined as below 50% of median income." },
-  { id: 227, term: "Resource allocation", def: "Assigning available factors of production to specific uses, answering the 'what' and 'how' to produce questions." },
-  { id: 228, term: "Scarcity", def: "The fundamental economic condition where limited resources cannot satisfy unlimited human needs and wants." },
-  { id: 229, term: "Short-run aggregate supply (SRAS)", def: "An upward-sloping curve showing the relationship between real GDP and price level when wages are held constant." },
-  { id: 230, term: "Social surplus", def: "The sum of consumer and producer surplus, maximised in a competitive market with no market failures." },
-  { id: 231, term: "Specialisation", def: "When a firm or country concentrates production on one or few goods, forming the basis for gains from trade." },
-  { id: 232, term: "Structural unemployment", def: "Unemployment from technological change, changing demand patterns, geographical shifts, or labour market rigidities." },
-  { id: 233, term: "Subsidy", def: "A government payment to firms to lower costs and prices, support producers, or protect against imports." },
-  { id: 234, term: "Substitute goods", def: "Goods satisfying a similar need — an increase in the price of one leads to increased demand for the other." },
-  { id: 235, term: "Substitution effect", def: "Part of the law of demand: as price falls, consumers substitute toward the now cheaper good." },
-  { id: 236, term: "Supply", def: "The quantities of a good firms are willing and able to produce at different prices during a time period, ceteris paribus." },
-  { id: 237, term: "Supply curve", def: "A curve showing the positive relationship between a good's price and the quantity supplied, ceteris paribus." },
-  { id: 238, term: "Supply-side policies", def: "Policies aiming to shift LRAS right for long-term growth; either market-based or interventionist." },
-  { id: 239, term: "Sustainability", def: "Maintaining the ability of the environment and economy to satisfy needs for future generations." },
-  { id: 240, term: "Sustainable development", def: "Development that meets present needs without compromising future generations' ability to meet their own needs." },
-  { id: 241, term: "Tariffs", def: "Taxes on imported goods — the most common form of trade protection, either protective or revenue-raising." },
-  { id: 242, term: "Theory of comparative advantage", def: "Countries gain from specialising and trading according to their lowest opportunity costs, improving global resource allocation." },
-  { id: 243, term: "Total revenue", def: "The amount received from selling a good, equal to price (P) × quantity (Q)." },
-  { id: 244, term: "Tradable permits", def: "Government-issued permits that can be bought and sold, limiting total pollutant emissions while allowing market flexibility." },
-  { id: 245, term: "Trade creation", def: "When a trading bloc replaces higher-cost products with lower-cost imports due to removed barriers." },
-  { id: 246, term: "Trade diversion", def: "When a trading bloc replaces lower-cost products with higher-cost imports from member countries." },
-  { id: 247, term: "Trade liberalisation", def: "The policy of eliminating trade protection and barriers to free up international trade." },
-  { id: 248, term: "Trade protection", def: "Government restrictions on imports to protect the domestic economy from foreign competition." },
-  { id: 249, term: "Trading bloc", def: "A group of countries that agree to reduce tariff and other trade barriers between them." },
-  { id: 250, term: "Transfer payments", def: "Government payments to individuals for income redistribution, supporting vulnerable groups like the elderly and unemployed." },
-  { id: 251, term: "Unemployment", def: "People of working age who are not currently employed but are actively seeking work and available to start. Includes frictional, structural, seasonal, and cyclical unemployment." },
-  { id: 252, term: "Unemployment rate", def: "The number of unemployed divided by the labour force, multiplied by 100." },
-  { id: 253, term: "Utility", def: "The satisfaction consumers gain from consuming a good or service." },
-  { id: 254, term: "Welfare loss", def: "Loss of social surplus when MSB ≠ MSC, arising from market failure." },
-  { id: 255, term: "World Trade Organization (WTO)", def: "An international organisation providing the framework for global trade rules, negotiations and dispute settlement." },
-];
-
-// ─── Utility ───
-const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
-const STORAGE_KEY = "ib-econ-terms-v2";
-
-const loadState = () => {
-  try {
-    const s = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return s || {};
-  } catch { return {}; }
-};
-const saveState = (s) => localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
-
-// ─── App ───
-function App() {
-  const [tab, setTab] = useState("terms");
-  const [known, setKnown] = useState(() => loadState().known || {});
-  const [dailyHistory, setDailyHistory] = useState(() => loadState().dailyHistory || []);
-  const [dailySet, setDailySet] = useState(() => loadState().dailySet || null);
-  const [dailyPhase, setDailyPhase] = useState(() => loadState().dailyPhase || "learn");
-  const [dailyQuizIdx, setDailyQuizIdx] = useState(0);
-  const [dailyAnswers, setDailyAnswers] = useState({});
-  const [flashIdx, setFlashIdx] = useState(0);
-  const [flashFlipped, setFlashFlipped] = useState(false);
-  const [matchTerms, setMatchTerms] = useState([]);
-  const [matchDefs, setMatchDefs] = useState([]);
-  const [matchSelected, setMatchSelected] = useState({ term: null, def: null });
-  const [matchMatched, setMatchMatched] = useState([]);
-  const [matchWrong, setMatchWrong] = useState(null);
-  const [writeIdx, setWriteIdx] = useState(0);
-  const [writeTerms, setWriteTerms] = useState([]);
-  const [writeInput, setWriteInput] = useState("");
-  const [writeResult, setWriteResult] = useState(null);
-  const [writeScores, setWriteScores] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [flashDeck, setFlashDeck] = useState([]);
-  const [emailAddress, setEmailAddress] = useState(() => { try { return JSON.parse(localStorage.getItem('ib-econ-email') || '""'); } catch { return ''; } });
-  const [emailSaved, setEmailSaved] = useState(false);
-  const [emailLog, setEmailLog] = useState(() => { try { return JSON.parse(localStorage.getItem('ib-econ-emaillog') || '[]'); } catch { return []; } });
-  const [sendingEmail, setSendingEmail] = useState(false);
-
-  useEffect(() => {
-    saveState({ known, dailyHistory, dailySet, dailyPhase });
-  }, [known, dailyHistory, dailySet, dailyPhase]);
-
-  useEffect(() => { localStorage.setItem('ib-econ-email', JSON.stringify(emailAddress)); }, [emailAddress]);
-  useEffect(() => { localStorage.setItem('ib-econ-emaillog', JSON.stringify(emailLog)); }, [emailLog]);
-
-  const knownCount = Object.keys(known).filter(k => known[k]).length;
-  const totalCount = ALL_TERMS.length;
-  const progress = Math.round((knownCount / totalCount) * 100);
-
-  const toggleKnown = (id) => {
-    setKnown(prev => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  // ─── Daily 5 Logic ───
-  const generateDaily = useCallback(() => {
-    const available = ALL_TERMS.filter(t => !known[t.id] && !dailyHistory.includes(t.id));
-    const pool = available.length >= 5 ? available : ALL_TERMS.filter(t => !known[t.id]);
-    const selected = shuffle(pool).slice(0, 5);
-    setDailySet(selected);
-    setDailyPhase("learn");
-    setDailyQuizIdx(0);
-    setDailyAnswers({});
-    setDailyHistory(prev => [...prev, ...selected.map(t => t.id)]);
-  }, [known, dailyHistory]);
-
-  // ─── Flash Cards ───
-  const initFlashcards = useCallback(() => {
-    setFlashDeck(shuffle([...ALL_TERMS]));
-    setFlashIdx(0);
-    setFlashFlipped(false);
-  }, []);
-
-  useEffect(() => { if (flashDeck.length === 0) initFlashcards(); }, []);
-
-  // ─── Matching Game ───
-  const initMatch = useCallback(() => {
-    const selected = shuffle([...ALL_TERMS]).slice(0, 6);
-    setMatchTerms(shuffle(selected.map(t => ({ id: t.id, term: t.term }))));
-    setMatchDefs(shuffle(selected.map(t => ({ id: t.id, def: t.def }))));
-    setMatchMatched([]);
-    setMatchSelected({ term: null, def: null });
-    setMatchWrong(null);
-  }, []);
-
-  useEffect(() => { initMatch(); }, []);
-
-  const handleMatchClick = (type, id) => {
-    if (matchMatched.includes(id)) return;
-    const next = { ...matchSelected, [type]: id };
-    setMatchSelected(next);
-    setMatchWrong(null);
-    if (next.term !== null && next.def !== null) {
-      if (next.term === next.def) {
-        setMatchMatched(prev => [...prev, next.term]);
-        setMatchSelected({ term: null, def: null });
-      } else {
-        setMatchWrong(true);
-        setTimeout(() => {
-          setMatchSelected({ term: null, def: null });
-          setMatchWrong(null);
-        }, 800);
-      }
-    }
-  };
-
-  // ─── Write Definition ───
-  const initWrite = useCallback(() => {
-    setWriteTerms(shuffle([...ALL_TERMS]).slice(0, 10));
-    setWriteIdx(0);
-    setWriteInput("");
-    setWriteResult(null);
-    setWriteScores([]);
-  }, []);
-
-  useEffect(() => { initWrite(); }, []);
-
-  const scoreDefinition = (userAnswer, correctDef) => {
-    const normalize = (s) => s.toLowerCase().replace(/[^a-z0-9 ]/g, "").split(/\s+/).filter(Boolean);
-    const userWords = new Set(normalize(userAnswer));
-    const correctWords = normalize(correctDef);
-    const keyWords = correctWords.filter(w => w.length > 3);
-    if (keyWords.length === 0) return 0;
-    const matched = keyWords.filter(w => userWords.has(w)).length;
-    const ratio = matched / keyWords.length;
-    if (ratio >= 0.5) return 2;
-    if (ratio >= 0.25) return 1;
-    return 0;
-  };
-
-  const tabs = [
-    { key: "terms", label: "Terms", icon: "📖" },
-    { key: "daily", label: "Daily 5", icon: "🎯" },
-    { key: "flash", label: "Flashcards", icon: "🃏" },
-    { key: "match", label: "Match", icon: "🔗" },
-    { key: "write", label: "Define", icon: "✍️" },
-    { key: "email", label: "Reminders", icon: "📧" },
-  ];
-
-  const filteredTerms = searchQuery
-    ? ALL_TERMS.filter(t =>
-        t.term.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        t.def.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : ALL_TERMS;
-
-  return (
-    <div style={{
-      minHeight: "100vh",
-      background: "linear-gradient(145deg, #0f1117 0%, #1a1d2e 50%, #0f1117 100%)",
-      color: "#e8e6e1",
-      fontFamily: "'DM Sans', 'Segoe UI', system-ui, sans-serif",
-    }}>
-      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
-      <style>{`
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #2a2d3e; border-radius: 3px; }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
-        @keyframes flipIn { from { transform: rotateY(90deg); opacity: 0; } to { transform: rotateY(0); opacity: 1; } }
-        .fade-up { animation: fadeUp 0.4s ease-out both; }
-        .shake { animation: shake 0.3s ease-in-out; }
-        .tab-btn { transition: all 0.2s ease; cursor: pointer; border: none; background: transparent; color: #6b6d7b; padding: 10px 16px; border-radius: 10px; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; font-family: inherit; white-space: nowrap; }
-        .tab-btn:hover { color: #c4b99a; background: rgba(196,185,154,0.06); }
-        .tab-btn.active { color: #c4b99a; background: rgba(196,185,154,0.1); }
-        .card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 20px; transition: all 0.2s ease; }
-        .card:hover { border-color: rgba(196,185,154,0.15); }
-        .btn { cursor: pointer; border: none; border-radius: 10px; font-family: inherit; font-weight: 500; transition: all 0.2s ease; }
-        .btn-primary { background: rgba(196,185,154,0.15); color: #c4b99a; padding: 10px 20px; font-size: 14px; }
-        .btn-primary:hover { background: rgba(196,185,154,0.25); }
-        .btn-sm { padding: 6px 14px; font-size: 12px; }
-        .check-btn { cursor: pointer; width: 22px; height: 22px; border-radius: 6px; border: 1.5px solid #3a3d4e; background: transparent; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: transparent; font-size: 12px; }
-        .check-btn.checked { background: rgba(196,185,154,0.2); border-color: #c4b99a; color: #c4b99a; }
-        .check-btn:hover { border-color: #c4b99a; }
-        input[type="text"], textarea { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px 14px; color: #e8e6e1; font-family: inherit; font-size: 14px; width: 100%; outline: none; transition: border-color 0.2s; }
-        input[type="text"]:focus, textarea:focus { border-color: rgba(196,185,154,0.3); }
-        .match-tile { cursor: pointer; padding: 14px; border-radius: 10px; border: 1.5px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); transition: all 0.2s ease; font-size: 13px; line-height: 1.4; }
-        .match-tile:hover { border-color: rgba(196,185,154,0.2); }
-        .match-tile.selected { border-color: #c4b99a; background: rgba(196,185,154,0.08); }
-        .match-tile.matched { border-color: rgba(120,180,120,0.4); background: rgba(120,180,120,0.06); opacity: 0.5; pointer-events: none; }
-        .match-tile.wrong { border-color: rgba(200,100,100,0.5); animation: shake 0.3s ease; }
-      `}</style>
-
-      {/* ─── Header ─── */}
-      <div style={{ padding: "28px 24px 0", maxWidth: 900, margin: "0 auto" }}>
-        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 8 }}>
-          <div>
-            <p style={{ fontSize: 11, letterSpacing: 3, color: "#6b6d7b", textTransform: "uppercase", marginBottom: 4, fontWeight: 600 }}>IB Economics HL</p>
-            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700, color: "#e8e6e1", letterSpacing: -0.5 }}>Key Terms</h1>
-          </div>
-          <div style={{ textAlign: "right" }}>
-            <p style={{ fontSize: 13, color: "#6b6d7b", marginBottom: 4 }}>{knownCount} / {totalCount} learnt</p>
-            <div style={{ width: 160, height: 5, background: "rgba(255,255,255,0.06)", borderRadius: 3, overflow: "hidden" }}>
-              <div style={{ width: `${progress}%`, height: "100%", background: "linear-gradient(90deg, #8a7d5a, #c4b99a)", borderRadius: 3, transition: "width 0.5s ease" }} />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ─── Tabs ─── */}
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "16px 24px 0", position: "sticky", top: 0, zIndex: 10, background: "linear-gradient(180deg, #0f1117 0%, #0f1117 85%, transparent 100%)" }}>
-        <div style={{ display: "flex", gap: 4, overflowX: "auto", paddingBottom: 12, borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-          {tabs.map(t => (
-            <button key={t.key} className={`tab-btn ${tab === t.key ? "active" : ""}`} onClick={() => setTab(t.key)}>
-              <span>{t.icon}</span> {t.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* ─── Content ─── */}
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "20px 24px 80px" }}>
-
-        {/* ═══ TERMS TAB ═══ */}
-        {tab === "terms" && (
-          <div className="fade-up">
-            <div style={{ marginBottom: 16 }}>
-              <input type="text" placeholder="Search terms or definitions..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
-            </div>
-            <p style={{ fontSize: 12, color: "#6b6d7b", marginBottom: 16 }}>{filteredTerms.length} terms {searchQuery && `matching "${searchQuery}"`}</p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              {filteredTerms.map((t, i) => (
-                <div key={t.id} className="card" style={{ display: "flex", gap: 14, alignItems: "flex-start", animationDelay: `${Math.min(i * 20, 400)}ms`, padding: "14px 16px" }}>
-                  <button className={`check-btn ${known[t.id] ? "checked" : ""}`} onClick={() => toggleKnown(t.id)}>✓</button>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: 14, fontWeight: 600, color: known[t.id] ? "#6b6d7b" : "#e8e6e1", marginBottom: 3, textDecoration: known[t.id] ? "line-through" : "none", opacity: known[t.id] ? 0.6 : 1 }}>{t.term}</p>
-                    <p style={{ fontSize: 13, color: "#8a8d9e", lineHeight: 1.5, opacity: known[t.id] ? 0.4 : 0.8 }}>{t.def}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ═══ DAILY 5 TAB ═══ */}
-        {tab === "daily" && (
-          <div className="fade-up">
-            {!dailySet ? (
-              <div style={{ textAlign: "center", padding: "60px 0" }}>
-                <p style={{ fontSize: 48, marginBottom: 16 }}>🎯</p>
-                <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, marginBottom: 8 }}>Daily 5</h2>
-                <p style={{ color: "#6b6d7b", fontSize: 14, marginBottom: 24, maxWidth: 360, margin: "0 auto 24px" }}>Learn 5 new terms, then get quizzed on them. Terms you've already learnt won't appear.</p>
-                <button className="btn btn-primary" onClick={generateDaily}>Start Today's 5</button>
-              </div>
-            ) : dailyPhase === "learn" ? (
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-                  <h2 style={{ fontSize: 18, fontWeight: 600 }}>Learn these 5 terms</h2>
-                  <span style={{ fontSize: 12, color: "#6b6d7b" }}>Read carefully, then quiz yourself</span>
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  {dailySet.map((t, i) => (
-                    <div key={t.id} className="card fade-up" style={{ animationDelay: `${i * 80}ms` }}>
-                      <p style={{ fontSize: 15, fontWeight: 600, color: "#c4b99a", marginBottom: 6 }}>{t.term}</p>
-                      <p style={{ fontSize: 14, color: "#a0a3b4", lineHeight: 1.6 }}>{t.def}</p>
-                    </div>
-                  ))}
-                </div>
-                <div style={{ textAlign: "center", marginTop: 24 }}>
-                  <button className="btn btn-primary" onClick={() => { setDailyPhase("quiz"); setDailyQuizIdx(0); setDailyAnswers({}); }}>I'm ready — Quiz me</button>
-                </div>
-              </div>
-            ) : dailyPhase === "quiz" ? (
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-                  <h2 style={{ fontSize: 18, fontWeight: 600 }}>Quiz — {dailyQuizIdx + 1}/5</h2>
-                  <div style={{ display: "flex", gap: 4 }}>
-                    {dailySet.map((_, i) => (
-                      <div key={i} style={{ width: 24, height: 4, borderRadius: 2, background: i < dailyQuizIdx ? (dailyAnswers[i] ? "rgba(120,180,120,0.6)" : "rgba(200,100,100,0.5)") : i === dailyQuizIdx ? "#c4b99a" : "rgba(255,255,255,0.08)" }} />
-                    ))}
-                  </div>
-                </div>
-                {(() => {
-                  const current = dailySet[dailyQuizIdx];
-                  const wrongOptions = shuffle(ALL_TERMS.filter(t => t.id !== current.id)).slice(0, 3);
-                  const options = useMemo(() => shuffle([current, ...wrongOptions]), [dailyQuizIdx]);
-                  const answered = dailyAnswers[dailyQuizIdx] !== undefined;
-                  return (
-                    <div className="fade-up" key={dailyQuizIdx}>
-                      <div className="card" style={{ marginBottom: 16, padding: 24, textAlign: "center" }}>
-                        <p style={{ fontSize: 11, color: "#6b6d7b", textTransform: "uppercase", letterSpacing: 2, marginBottom: 8 }}>What is the definition of</p>
-                        <p style={{ fontSize: 22, fontFamily: "'Playfair Display', serif", color: "#c4b99a" }}>{current.term}</p>
-                      </div>
-                      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                        {options.map((opt, oi) => {
-                          const isCorrect = opt.id === current.id;
-                          const wasChosen = dailyAnswers[dailyQuizIdx] === opt.id;
-                          let bg = "rgba(255,255,255,0.02)";
-                          let border = "rgba(255,255,255,0.06)";
-                          if (answered) {
-                            if (isCorrect) { bg = "rgba(120,180,120,0.08)"; border = "rgba(120,180,120,0.3)"; }
-                            else if (wasChosen) { bg = "rgba(200,100,100,0.08)"; border = "rgba(200,100,100,0.3)"; }
-                          }
-                          return (
-                            <button key={oi} className="btn" disabled={answered} onClick={() => {
-                              setDailyAnswers(prev => ({ ...prev, [dailyQuizIdx]: opt.id }));
-                            }} style={{ background: bg, border: `1.5px solid ${border}`, padding: "14px 16px", textAlign: "left", fontSize: 13, color: "#c0c3d4", lineHeight: 1.5, cursor: answered ? "default" : "pointer" }}>
-                              {opt.def}
-                            </button>
-                          );
-                        })}
-                      </div>
-                      {answered && (
-                        <div style={{ textAlign: "center", marginTop: 20 }}>
-                          {dailyQuizIdx < 4 ? (
-                            <button className="btn btn-primary" onClick={() => setDailyQuizIdx(prev => prev + 1)}>Next →</button>
-                          ) : (
-                            <button className="btn btn-primary" onClick={() => setDailyPhase("results")}>See Results</button>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })()}
-              </div>
-            ) : (
-              <div className="fade-up" style={{ textAlign: "center" }}>
-                <p style={{ fontSize: 48, marginBottom: 12 }}>
-                  {Object.values(dailyAnswers).filter((a, i) => a === dailySet[i]?.id).length >= 4 ? "🎉" : "📚"}
-                </p>
-                <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, marginBottom: 8 }}>
-                  {Object.values(dailyAnswers).filter((a, i) => a === dailySet[i]?.id).length} / 5 correct
-                </h2>
-                <p style={{ color: "#6b6d7b", fontSize: 14, marginBottom: 24 }}>Tick off the ones you know</p>
-                <div style={{ display: "flex", flexDirection: "column", gap: 8, textAlign: "left", marginBottom: 24 }}>
-                  {dailySet.map((t, i) => {
-                    const correct = dailyAnswers[i] === t.id;
-                    return (
-                      <div key={t.id} className="card" style={{ display: "flex", gap: 14, alignItems: "center", borderColor: correct ? "rgba(120,180,120,0.2)" : "rgba(200,100,100,0.15)" }}>
-                        <button className={`check-btn ${known[t.id] ? "checked" : ""}`} onClick={() => toggleKnown(t.id)}>✓</button>
-                        <div>
-                          <p style={{ fontSize: 14, fontWeight: 600, color: correct ? "#a0c8a0" : "#c8a0a0" }}>{correct ? "✓" : "✗"} {t.term}</p>
-                          <p style={{ fontSize: 12, color: "#6b6d7b", marginTop: 2 }}>{t.def}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                <button className="btn btn-primary" onClick={() => { setDailySet(null); setDailyPhase("learn"); }}>New Set of 5</button>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ═══ FLASHCARDS TAB ═══ */}
-        {tab === "flash" && (
-          <div className="fade-up" style={{ textAlign: "center" }}>
-            <p style={{ fontSize: 12, color: "#6b6d7b", marginBottom: 16 }}>{flashIdx + 1} / {flashDeck.length}</p>
-            {flashDeck.length > 0 && (
-              <div onClick={() => setFlashFlipped(!flashFlipped)} style={{ cursor: "pointer", maxWidth: 460, margin: "0 auto", minHeight: 220, display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 30px", borderRadius: 16, border: "1px solid rgba(255,255,255,0.06)", background: flashFlipped ? "rgba(196,185,154,0.04)" : "rgba(255,255,255,0.02)", transition: "all 0.3s ease" }}>
-                {!flashFlipped ? (
-                  <div key={`front-${flashIdx}`} style={{ animation: "flipIn 0.3s ease" }}>
-                    <p style={{ fontSize: 11, color: "#6b6d7b", textTransform: "uppercase", letterSpacing: 2, marginBottom: 12 }}>Term</p>
-                    <p style={{ fontSize: 24, fontFamily: "'Playfair Display', serif", color: "#e8e6e1" }}>{flashDeck[flashIdx]?.term}</p>
-                    <p style={{ fontSize: 12, color: "#4a4d5e", marginTop: 16 }}>Tap to reveal</p>
-                  </div>
-                ) : (
-                  <div key={`back-${flashIdx}`} style={{ animation: "flipIn 0.3s ease" }}>
-                    <p style={{ fontSize: 11, color: "#c4b99a", textTransform: "uppercase", letterSpacing: 2, marginBottom: 12 }}>Definition</p>
-                    <p style={{ fontSize: 16, color: "#c0c3d4", lineHeight: 1.6 }}>{flashDeck[flashIdx]?.def}</p>
-                  </div>
-                )}
-              </div>
-            )}
-            <div style={{ display: "flex", gap: 10, justifyContent: "center", marginTop: 24 }}>
-              <button className="btn btn-primary btn-sm" disabled={flashIdx === 0} onClick={() => { setFlashIdx(flashIdx - 1); setFlashFlipped(false); }} style={{ opacity: flashIdx === 0 ? 0.3 : 1 }}>← Prev</button>
-              <button className="btn btn-sm" style={{ background: "rgba(255,255,255,0.04)", color: "#6b6d7b", padding: "6px 14px", fontSize: 12 }} onClick={initFlashcards}>Shuffle</button>
-              <button className="btn btn-primary btn-sm" disabled={flashIdx >= flashDeck.length - 1} onClick={() => { setFlashIdx(flashIdx + 1); setFlashFlipped(false); }} style={{ opacity: flashIdx >= flashDeck.length - 1 ? 0.3 : 1 }}>Next →</button>
-            </div>
-          </div>
-        )}
-
-        {/* ═══ MATCH TAB ═══ */}
-        {tab === "match" && (
-          <div className="fade-up">
-            {matchMatched.length === 6 ? (
-              <div style={{ textAlign: "center", padding: "60px 0" }}>
-                <p style={{ fontSize: 48, marginBottom: 12 }}>🎉</p>
-                <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, marginBottom: 16 }}>All matched!</h2>
-                <button className="btn btn-primary" onClick={initMatch}>Play Again</button>
-              </div>
-            ) : (
-              <>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                  <h2 style={{ fontSize: 16, fontWeight: 600 }}>Match terms to definitions</h2>
-                  <span style={{ fontSize: 12, color: "#6b6d7b" }}>{matchMatched.length}/6</span>
-                </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                    <p style={{ fontSize: 11, color: "#6b6d7b", textTransform: "uppercase", letterSpacing: 2, marginBottom: 4 }}>Terms</p>
-                    {matchTerms.map(t => (
-                      <div key={t.id} className={`match-tile ${matchMatched.includes(t.id) ? "matched" : ""} ${matchSelected.term === t.id ? "selected" : ""} ${matchWrong && matchSelected.term === t.id ? "wrong" : ""}`} onClick={() => handleMatchClick("term", t.id)}>
-                        <strong>{t.term}</strong>
-                      </div>
-                    ))}
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                    <p style={{ fontSize: 11, color: "#6b6d7b", textTransform: "uppercase", letterSpacing: 2, marginBottom: 4 }}>Definitions</p>
-                    {matchDefs.map(d => (
-                      <div key={d.id} className={`match-tile ${matchMatched.includes(d.id) ? "matched" : ""} ${matchSelected.def === d.id ? "selected" : ""} ${matchWrong && matchSelected.def === d.id ? "wrong" : ""}`} onClick={() => handleMatchClick("def", d.id)}>
-                        {d.def}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        )}
-
-        {/* ═══ WRITE / DEFINE TAB ═══ */}
-        {tab === "write" && (
-          <div className="fade-up">
-            {writeTerms.length > 0 && writeIdx < writeTerms.length ? (
-              <>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                  <h2 style={{ fontSize: 16, fontWeight: 600 }}>Define the term</h2>
-                  <span style={{ fontSize: 12, color: "#6b6d7b" }}>{writeIdx + 1} / {writeTerms.length}</span>
-                </div>
-                <div className="card" style={{ textAlign: "center", padding: 28, marginBottom: 16 }}>
-                  <p style={{ fontSize: 22, fontFamily: "'Playfair Display', serif", color: "#c4b99a" }}>{writeTerms[writeIdx]?.term}</p>
-                </div>
-                <textarea rows={4} placeholder="Write your definition..." value={writeInput} onChange={e => setWriteInput(e.target.value)} disabled={writeResult !== null} style={{ marginBottom: 12, resize: "vertical" }} />
-                {writeResult === null ? (
-                  <button className="btn btn-primary" onClick={() => {
-                    const score = scoreDefinition(writeInput, writeTerms[writeIdx].def);
-                    setWriteResult(score);
-                    setWriteScores(prev => [...prev, score]);
-                  }} disabled={!writeInput.trim()}>Submit</button>
-                ) : (
-                  <div className="fade-up">
-                    <div className="card" style={{ marginBottom: 16, borderColor: writeResult === 2 ? "rgba(120,180,120,0.2)" : writeResult === 1 ? "rgba(196,185,154,0.2)" : "rgba(200,100,100,0.2)" }}>
-                      <p style={{ fontSize: 20, fontWeight: 700, marginBottom: 6, color: writeResult === 2 ? "#a0c8a0" : writeResult === 1 ? "#c4b99a" : "#c8a0a0" }}>
-                        {writeResult}/2 — {writeResult === 2 ? "Excellent!" : writeResult === 1 ? "Mostly right" : "Review this one"}
-                      </p>
-                      <p style={{ fontSize: 12, color: "#6b6d7b", marginBottom: 8 }}>Correct definition:</p>
-                      <p style={{ fontSize: 14, color: "#a0a3b4", lineHeight: 1.5 }}>{writeTerms[writeIdx]?.def}</p>
-                    </div>
-                    <button className="btn btn-primary" onClick={() => {
-                      setWriteIdx(prev => prev + 1);
-                      setWriteInput("");
-                      setWriteResult(null);
-                    }}>Next →</button>
-                  </div>
-                )}
-              </>
-            ) : (
-              <div style={{ textAlign: "center", padding: "60px 0" }}>
-                <p style={{ fontSize: 48, marginBottom: 12 }}>📝</p>
-                <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, marginBottom: 8 }}>
-                  {writeScores.length > 0 ? `${writeScores.reduce((a, b) => a + b, 0)} / ${writeScores.length * 2}` : "Define Terms"}
-                </h2>
-                <p style={{ color: "#6b6d7b", fontSize: 14, marginBottom: 24 }}>
-                  {writeScores.length > 0 ? "Great effort! Try another round." : "Write definitions from memory and get scored out of 2."}
-                </p>
-                <button className="btn btn-primary" onClick={initWrite}>
-                  {writeScores.length > 0 ? "New Round" : "Start"}
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ═══ EMAIL REMINDERS TAB ═══ */}
-        {tab === "email" && (
-          <div className="fade-up">
-            <div style={{ marginBottom: 24 }}>
-              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, marginBottom: 6 }}>Daily Email Reminders</h2>
-              <p style={{ fontSize: 13, color: "#6b6d7b", lineHeight: 1.5 }}>Get 8 personalised terms you haven't learnt yet sent to your inbox. Tap the buttons to generate a morning or evening reminder.</p>
-            </div>
-            <div className="card" style={{ marginBottom: 16 }}>
-              <p style={{ fontSize: 13, fontWeight: 600, color: "#c4b99a", marginBottom: 10 }}>📬 Your email address</p>
-              <div style={{ display: "flex", gap: 10 }}>
-                <input type="email" placeholder="you@example.com" value={emailAddress} onChange={e => { setEmailAddress(e.target.value); setEmailSaved(false); }} style={{ flex: 1, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: "10px 14px", color: "#e8e6e1", fontFamily: "inherit", fontSize: 14, outline: "none" }} />
-                <button className="btn btn-primary btn-sm" onClick={() => { setEmailSaved(true); setTimeout(() => setEmailSaved(false), 2000); }}>
-                  {emailSaved ? "✓ Saved" : "Save"}
-                </button>
-              </div>
-            </div>
-            <div className="card" style={{ marginBottom: 16, display: "flex", gap: 24 }}>
-              <div><p style={{ fontSize: 11, color: "#6b6d7b", textTransform: "uppercase", letterSpacing: 2, marginBottom: 4 }}>Progress</p><p style={{ fontSize: 20, fontWeight: 700, color: "#c4b99a" }}>{knownCount}/{totalCount}</p></div>
-              <div><p style={{ fontSize: 11, color: "#6b6d7b", textTransform: "uppercase", letterSpacing: 2, marginBottom: 4 }}>Remaining</p><p style={{ fontSize: 20, fontWeight: 700, color: "#e8e6e1" }}>{totalCount - knownCount}</p></div>
-              <div><p style={{ fontSize: 11, color: "#6b6d7b", textTransform: "uppercase", letterSpacing: 2, marginBottom: 4 }}>Emails</p><p style={{ fontSize: 20, fontWeight: 700, color: "#e8e6e1" }}>{emailLog.length}</p></div>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 20 }}>
-              {["morning", "evening"].map(session => (
-                <div key={session} className="card" style={{ textAlign: "center", padding: 24 }}>
-                  <p style={{ fontSize: 28, marginBottom: 8 }}>{session === "morning" ? "☀️" : "🌙"}</p>
-                  <p style={{ fontSize: 14, fontWeight: 600, color: "#e8e6e1", marginBottom: 4 }}>{session === "morning" ? "Morning Blast" : "Evening Review"}</p>
-                  <p style={{ fontSize: 12, color: "#6b6d7b", marginBottom: 16 }}>8 terms to {session === "morning" ? "start your day" : "review before bed"}</p>
-                  <button className="btn btn-primary" disabled={sendingEmail || !emailAddress} onClick={() => {
-                    if (!emailAddress) { alert("Enter your email first."); return; }
-                    setSendingEmail(true);
-                    const unlearnedTerms = ALL_TERMS.filter(t => !known[t.id]);
-                    const pick = [...unlearnedTerms].sort(() => Math.random() - 0.5).slice(0, 8);
-                    const greetings = { morning: ["Rise and revise,", "Morning grind,", "Good morning!"], evening: ["Evening review time,", "Wind down with econ,", "Before you sleep —"] };
-                    const greeting = greetings[session][Math.floor(Math.random() * greetings[session].length)];
-                    const body = greeting + " here are 8 IB Economics terms:\n\n" + pick.map(t => "📌 " + t.term + "\n   " + t.def).join("\n\n") + "\n\n---\nProgress: " + knownCount + "/" + totalCount + " learnt";
-                    const subject = (session === "morning" ? "☀️ IB Econ Morning" : "🌙 IB Econ Evening") + " — " + new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "short" });
-                    const mailto = "mailto:" + emailAddress + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
-                    window.open(mailto, "_blank");
-                    const now = new Date();
-                    setEmailLog(prev => [{ time: now.toLocaleString("en-GB"), session, subject, status: "opened in mail client" }, ...prev].slice(0, 20));
-                    setTimeout(() => setSendingEmail(false), 1000);
-                  }} style={{ width: "100%", opacity: !emailAddress ? 0.5 : 1 }}>
-                    {sendingEmail ? "Opening..." : "Send Now " + (session === "morning" ? "☀️" : "🌙")}
-                  </button>
-                </div>
-              ))}
-            </div>
-            <div className="card" style={{ marginBottom: 16, borderColor: "rgba(196,185,154,0.1)", background: "rgba(196,185,154,0.03)" }}>
-              <p style={{ fontSize: 13, fontWeight: 600, color: "#c4b99a", marginBottom: 6 }}>📌 How this works</p>
-              <p style={{ fontSize: 12, color: "#6b6d7b", lineHeight: 1.65 }}>
-                Tapping "Send Now" opens your email client pre-filled with 8 terms you haven't learnt yet, with your progress stats. For automated daily scheduling, bookmark this page and tap each morning and evening — or set a recurring calendar reminder pointing here.
-              </p>
-            </div>
-            {emailLog.length > 0 && (
-              <div>
-                <p style={{ fontSize: 13, fontWeight: 600, color: "#6b6d7b", marginBottom: 10 }}>📋 Recent activity</p>
-                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  {emailLog.map((e, i) => (
-                    <div key={i} style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: 8, padding: "10px 14px", fontSize: 12 }}>
-                      <div style={{ display: "flex", justifyContent: "space-between" }}>
-                        <span style={{ color: e.session === "morning" ? "#f5b84a" : "#b09de0" }}>{e.session === "morning" ? "☀️" : "🌙"} {e.session}</span>
-                        <span style={{ color: "#4a4d5e" }}>{e.time}</span>
-                      </div>
-                      <p style={{ color: "#8a8d9e", marginTop: 3 }}>{e.subject}</p>
-                      <span style={{ fontSize: 10, color: "#80c080" }}>● {e.status}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+<div id="app">
+  <!-- Header -->
+  <div id="header">
+    <div>
+      <p class="header-label">IB Economics HL</p>
+      <h1>Key Terms</h1>
+    </div>
+    <div style="text-align:right">
+      <p class="progress-label"><span id="hdr-known">0</span> / <span id="hdr-total">0</span> learnt</p>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
       </div>
     </div>
-  );
+  </div>
+
+  <!-- Tabs -->
+  <div id="tabs-wrap">
+    <div id="tabs">
+      <button class="tab-btn active" data-tab="terms">📖 Terms</button>
+      <button class="tab-btn" data-tab="daily">🎯 Daily 5</button>
+      <button class="tab-btn" data-tab="flash">🃏 Flashcards</button>
+      <button class="tab-btn" data-tab="match">🔗 Match</button>
+      <button class="tab-btn" data-tab="write">✍️ Define</button>
+      <button class="tab-btn" data-tab="email">📧 Reminders</button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div id="content">
+
+    <!-- ═══ TERMS ═══ -->
+    <div class="tab-panel active fade-up" id="panel-terms">
+      <div id="search-wrap" class="mb16">
+        <input type="text" id="search-input" placeholder="Search terms or definitions..." />
+      </div>
+      <p id="search-meta" class="mb16"></p>
+      <div id="terms-list"></div>
+    </div>
+
+    <!-- ═══ DAILY 5 ═══ -->
+    <div class="tab-panel" id="panel-daily">
+      <div id="daily-content"></div>
+    </div>
+
+    <!-- ═══ FLASHCARDS ═══ -->
+    <div class="tab-panel" id="panel-flash">
+      <p id="flash-counter"></p>
+      <div id="flashcard">
+        <div id="flashcard-inner"></div>
+      </div>
+      <div id="flash-controls"></div>
+    </div>
+
+    <!-- ═══ MATCH ═══ -->
+    <div class="tab-panel" id="panel-match">
+      <div id="match-content"></div>
+    </div>
+
+    <!-- ═══ WRITE / DEFINE ═══ -->
+    <div class="tab-panel" id="panel-write">
+      <div id="write-content"></div>
+    </div>
+
+    <!-- ═══ EMAIL REMINDERS ═══ -->
+    <div class="tab-panel" id="panel-email">
+      <div class="mb24">
+        <h2 class="section-title mb6">Daily Email Reminders</h2>
+        <p style="font-size:13px;color:var(--muted);line-height:1.5">Get a personalised set of 8 terms you haven't learnt yet sent to your inbox each morning and evening. Tap the buttons below to send one now.</p>
+      </div>
+
+      <!-- Email input -->
+      <div class="card mb16">
+        <p style="font-size:13px;font-weight:600;color:var(--gold)" class="mb10">📬 Your email address</p>
+        <div style="display:flex;gap:10px">
+          <input type="email" id="email-address" placeholder="remy@example.com" style="flex:1" />
+          <button class="btn btn-primary btn-sm" id="email-save-btn" style="white-space:nowrap">Save</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="card mb16">
+        <div class="stats-row">
+          <div class="stat-item">
+            <p class="stat-label">Progress</p>
+            <p class="stat-value" id="email-stat-known">0/0</p>
+          </div>
+          <div class="stat-item">
+            <p class="stat-label">Remaining</p>
+            <p class="stat-value plain" id="email-stat-remaining">0</p>
+          </div>
+          <div class="stat-item">
+            <p class="stat-label">Emails sent</p>
+            <p class="stat-value plain" id="email-stat-sent">0</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Send buttons -->
+      <div class="send-grid">
+        <div class="card send-card">
+          <p style="font-size:28px" class="mb8">☀️</p>
+          <p style="font-size:14px;font-weight:600" class="mb4">Morning Blast</p>
+          <p style="font-size:12px;color:var(--muted)" class="mb16">8 terms to start your day</p>
+          <button class="btn btn-morning" id="btn-morning" style="width:100%">Send Now ☀️</button>
+        </div>
+        <div class="card send-card">
+          <p style="font-size:28px" class="mb8">🌙</p>
+          <p style="font-size:14px;font-weight:600" class="mb4">Evening Review</p>
+          <p style="font-size:12px;color:var(--muted)" class="mb16">8 terms before you sleep</p>
+          <button class="btn btn-evening" id="btn-evening" style="width:100%">Send Now 🌙</button>
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div class="card mb16">
+        <p style="font-size:13px;font-weight:600;color:var(--gold)" class="mb12">👀 Preview of next reminder</p>
+        <div id="email-preview" style="background:rgba(0,0,0,0.2);border-radius:8px;padding:14px;font-family:monospace;font-size:12px;color:#8a8d9e;line-height:1.7;white-space:pre-wrap;max-height:200px;overflow:auto"></div>
+      </div>
+
+      <!-- Setup note -->
+      <div class="card mb16" style="border-color:rgba(196,185,154,0.1);background:rgba(196,185,154,0.03)">
+        <p style="font-size:13px;font-weight:600;color:var(--gold)" class="mb6">📌 How to set up scheduled daily reminders</p>
+        <p style="font-size:12px;color:var(--muted);line-height:1.65">
+          The "Send Now" buttons above generate a personalised email with 8 terms for you to review. For automated daily scheduling (7am & 9pm), you can:<br><br>
+          1. <strong style="color:var(--subtle)">Gmail + Zapier</strong>: Create a Zap to call this app's email generation and send via Gmail on a schedule<br>
+          2. <strong style="color:var(--subtle)">Google Calendar</strong>: Set a recurring reminder event at 7am and 9pm pointing to this app<br>
+          3. <strong style="color:var(--subtle)">Manual</strong>: Bookmark this tab and tap "Send Now" each morning and evening<br><br>
+          Each email contains different terms prioritising ones you haven't learnt yet.
+        </p>
+      </div>
+
+      <!-- Log -->
+      <div id="email-log-wrap" style="display:none">
+        <p style="font-size:13px;font-weight:600;color:var(--muted)" class="mb10">📋 Recent activity</p>
+        <div id="email-log"></div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /app -->
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const ALL_TERMS = [
+  { id: 1, term: "Abnormal profit", def: "Profit earned above normal profit; occurs when total revenue exceeds total costs, meaning price exceeds average total cost (P > ATC). Also called supernormal or economic profit." },
+  { id: 2, term: "Absolute advantage", def: "A country has an absolute advantage in producing a good when it can produce more output using the same quantity of resources (or the same output using fewer resources) than another country." },
+  { id: 3, term: "Absolute poverty", def: "A condition where individuals lack sufficient income to afford the minimum necessities for survival, typically defined by an internationally agreed poverty line such as the World Bank's $2.15/day threshold." },
+  { id: 4, term: "Abuse of market power", def: "Anti-competitive behaviour by a dominant firm, such as predatory pricing, exclusive dealing, or collusion, that harms competition and consumer welfare." },
+  { id: 5, term: "Actual growth", def: "An increase in real GDP resulting from the use of previously unemployed or underemployed resources, shown on a PPC diagram as movement from a point inside the curve toward the curve itself." },
+  { id: 6, term: "Administrative barriers", def: "Non-tariff trade protection measures such as burdensome customs procedures, health and safety inspections, and labelling requirements that raise the cost of imports and restrict trade." },
+  { id: 7, term: "Adverse selection", def: "A form of market failure arising from asymmetric information before a transaction, where higher-risk individuals are more likely to participate in a market (e.g. unhealthy people seeking insurance), driving up costs and potentially causing market collapse." },
+  { id: 8, term: "Aggregate demand", def: "The total spending on an economy's goods and services at different price levels, ceteris paribus. Composed of consumption (C), investment (I), government spending (G), and net exports (X − M). AD = C + I + G + (X − M)." },
+  { id: 9, term: "Aggregate demand curve", def: "A downward-sloping curve showing the inverse relationship between the price level and real GDP demanded. It slopes downward due to the wealth effect, interest rate effect, and international trade effect." },
+  { id: 10, term: "Aggregate supply", def: "The total quantity of goods and services that all firms in an economy are willing and able to produce at different price levels, ceteris paribus." },
+  { id: 11, term: "Allocative efficiency", def: "Occurs when resources are allocated to produce the combination of goods and services most valued by society; achieved where marginal social benefit equals marginal social cost (MSB = MSC), or equivalently where P = MC in competitive markets." },
+  { id: 12, term: "Allocative inefficiency", def: "The failure to achieve allocative efficiency; occurs when MSB ≠ MSC, meaning too much or too little of a good is produced relative to the socially optimal level, creating a welfare loss." },
+  { id: 13, term: "Anchoring", def: "A behavioural bias where individuals rely too heavily on the first piece of information encountered (the 'anchor') when making decisions, even when that information is arbitrary or irrelevant." },
+  { id: 14, term: "Anti-dumping", def: "A trade protection measure imposed when a foreign country exports goods at a price below their cost of production (dumping), which is considered an unfair trade practice under WTO rules." },
+  { id: 15, term: "Appreciation", def: "An increase in a currency's value relative to other currencies under a floating or managed exchange rate system, caused by increased demand for or reduced supply of that currency." },
+  { id: 16, term: "Appropriate technology", def: "Technology suited to the factor endowments, economic conditions, and environmental context of a country — often labour-intensive methods in developing countries where labour is abundant and capital is scarce." },
+  { id: 17, term: "Asymmetric information", def: "A situation where one party to a transaction has more or better information than the other, leading to market failure. Can result in adverse selection (before transaction) and moral hazard (after transaction)." },
+  { id: 18, term: "Automatic stabilisers", def: "Built-in fiscal mechanisms — such as progressive income taxes and unemployment benefits — that automatically reduce the severity of business cycle fluctuations without discretionary government action." },
+  { id: 19, term: "Average costs", def: "Total costs divided by quantity of output (TC ÷ Q). Includes both fixed and variable costs per unit. The ATC curve is U-shaped due to the law of diminishing marginal returns in the short run." },
+  { id: 20, term: "Average revenue", def: "Total revenue divided by quantity sold (TR ÷ Q). In a perfectly competitive market, AR equals the market price and is equal to marginal revenue. For a monopolist, the AR curve is the demand curve." },
+  { id: 21, term: "Average tax rate", def: "The proportion of total income paid as tax; calculated as total tax paid divided by total income, expressed as a percentage. Rises with income under progressive taxation." },
+  { id: 22, term: "Balance of payments", def: "A systematic record of all economic transactions between residents of a country and the rest of the world over a given period, divided into the current account, capital account, and financial account. Must always balance to zero." },
+  { id: 23, term: "Balance of trade in goods", def: "The value of a country's goods exports minus the value of its goods imports over a specific time period. A positive value is a trade surplus; a negative value is a trade deficit." },
+  { id: 24, term: "Balance of trade in services", def: "The value of a country's services exports (e.g. tourism, financial services) minus the value of its services imports over a given period." },
+  { id: 25, term: "Barriers to entry", def: "Obstacles that prevent new firms from entering an industry, protecting incumbent firms' market power. Examples include economies of scale, brand loyalty, patents, legal barriers, and high startup costs." },
+  { id: 26, term: "Behavioural economics", def: "A branch of economics combining psychological insights with economic theory to explain why people often deviate from the rational, self-interested behaviour assumed in classical economics." },
+  { id: 27, term: "Biases", def: "Systematic, predictable errors in judgment identified by behavioural economics, including rules of thumb (heuristics), anchoring, framing, and availability bias, which cause decisions to deviate from rational choice." },
+  { id: 28, term: "Bilateral trade agreement", def: "A formal agreement between two countries to reduce or eliminate trade barriers (tariffs, quotas) between them, with negotiated terms applying exclusively to both parties." },
+  { id: 29, term: "Bounded rationality", def: "The concept that individuals' decision-making is constrained by limited information, cognitive capacity, and time, meaning choices are 'rational' only within those limits rather than fully optimal." },
+  { id: 30, term: "Bounded self-control", def: "The recognition that individuals often lack the willpower to act on their long-run best interests, causing short-run impulses to override rational long-term planning (e.g. overspending, under-saving)." },
+  { id: 31, term: "Bounded selfishness", def: "The idea that people's self-interest is limited; they sometimes act altruistically or consider the welfare of others, contradicting the purely self-interested 'homo economicus' of classical theory." },
+  { id: 32, term: "Budget deficit", def: "When a government's total expenditure exceeds its total tax revenues in a given fiscal period. A deficit must be financed by borrowing, increasing government debt." },
+  { id: 33, term: "Budget surplus", def: "When a government's total tax revenues exceed its total expenditure in a given fiscal period. A surplus can be used to repay existing government debt." },
+  { id: 34, term: "Business confidence", def: "A measure of firms' optimism about future economic conditions and profitability. Higher business confidence leads to more investment spending (I), shifting the AD curve rightward." },
+  { id: 35, term: "Business cycle", def: "The recurring pattern of fluctuations in real GDP over time, characterised by alternating phases of expansion (recovery/boom) and contraction (recession/slump) around the long-run trend growth rate." },
+  { id: 36, term: "Capital", def: "A factor of production consisting of manufactured or processed inputs — machinery, equipment, tools, and buildings — used to produce goods and services. Distinct from financial capital (money)." },
+  { id: 37, term: "Capital account", def: "A component of the balance of payments that records capital transfers (e.g. debt forgiveness, migrants' assets) and the acquisition or disposal of non-produced, non-financial assets such as land and patents. Typically very small." },
+  { id: 38, term: "Capital expenditures", def: "Government spending on long-term physical assets — roads, hospitals, schools, airports — that increase the economy's productive capacity and shift the LRAS curve rightward." },
+  { id: 39, term: "Capital flight", def: "The rapid movement of large quantities of financial capital out of a country, typically triggered by political instability, economic uncertainty, or fears of currency devaluation." },
+  { id: 40, term: "Carbon tax", def: "A Pigouvian tax levied per unit of carbon dioxide (or equivalent) emitted from burning fossil fuels, designed to internalise the negative externality of climate change by raising the private cost of production to equal the social cost." },
+  { id: 41, term: "Central bank", def: "A government institution responsible for managing a country's monetary policy, issuing currency, acting as lender of last resort to commercial banks, and maintaining financial system stability." },
+  { id: 42, term: "Ceteris paribus", def: "Latin for 'other things being equal.' A simplifying assumption used in economics to isolate the effect of one variable by holding all other relevant variables constant." },
+  { id: 43, term: "Choice architecture", def: "The design of the environment in which choices are presented. Based on behavioural economics, it recognises that how options are framed and arranged significantly influences the decisions people make." },
+  { id: 44, term: "Circular economy", def: "An economic model designed to eliminate waste by keeping resources in use as long as possible, using biological cycles and closed-loop production systems that minimise resource extraction and environmental damage." },
+  { id: 45, term: "Circular flow of income", def: "A model showing how money flows between households and firms in an economy: households supply factors of production and receive income, which is spent on goods and services produced by firms. GDP = national income = national expenditure." },
+  { id: 46, term: "Classical economics", def: "The 18th–19th century school of thought (e.g. Adam Smith, David Ricardo) holding that free markets, through the price mechanism, naturally allocate resources efficiently without government intervention." },
+  { id: 47, term: "Collective self-governance", def: "A solution to the tragedy of the commons whereby users of a shared resource establish and enforce their own rules for sustainable use, avoiding both private exploitation and costly government regulation." },
+  { id: 48, term: "Collusion", def: "An agreement — explicit (formal cartel) or tacit (informal) — among oligopolistic firms to coordinate pricing or output decisions to reduce competition and increase joint profits, typically at consumers' expense." },
+  { id: 49, term: "Collusive oligopoly", def: "An oligopoly where firms formally or informally cooperate to fix prices, limit output, or divide markets, behaving collectively like a monopoly to maximise joint profits." },
+  { id: 50, term: "Common market", def: "A form of economic integration where member countries eliminate internal trade barriers (like a customs union) and also allow free movement of labour and capital between member states." },
+  { id: 51, term: "Common pool resources", def: "Resources that are non-excludable (cannot be restricted to paying users) but rivalrous (one person's use reduces availability for others), such as fisheries and groundwater. Their free access leads to overuse and depletion — the 'tragedy of the commons.'" },
+  { id: 52, term: "Comparative advantage", def: "A country has a comparative advantage in producing a good when it can produce it at a lower opportunity cost than another country. This forms the theoretical basis for mutually beneficial international trade, even when one country has an absolute advantage in all goods." },
+  { id: 53, term: "Competition", def: "A market situation with many independent buyers and sellers, none of whom individually has the power to influence the market price. Competitive pressure encourages efficiency and lower prices." },
+  { id: 54, term: "Competitive market equilibrium", def: "The stable market outcome where the demand and supply curves intersect, such that quantity demanded equals quantity supplied and there is no tendency for price or quantity to change." },
+  { id: 55, term: "Competitive supply", def: "A supply relationship where two or more goods compete for the same productive resources, so an increase in production of one good reduces the supply of the other (e.g. wheat and corn on the same farmland)." },
+  { id: 56, term: "Complements", def: "Goods that are consumed jointly, so the demand for one is inversely related to the price of the other. Cross-price elasticity of demand is negative for complements (e.g. printers and ink cartridges)." },
+  { id: 57, term: "Composite indicator", def: "A single summary measure constructed from several individual indicators to capture a broader concept. The Human Development Index (HDI) is a key IB example, combining GNI per capita, life expectancy, and education." },
+  { id: 58, term: "Concentration ratio", def: "The combined market share (% of total industry output or sales) held by the largest n firms in an industry. A high concentration ratio indicates significant market power and oligopolistic or monopolistic structure." },
+  { id: 59, term: "Consumer confidence", def: "A measure of households' optimism about their future income and economic prospects. Higher consumer confidence increases current consumption spending (C), shifting the AD curve rightward." },
+  { id: 60, term: "Consumer price index", def: "A weighted measure of the average price level of a representative basket of goods and services purchased by households, used to track inflation and changes in the cost of living relative to a base year." },
+  { id: 61, term: "Consumer surplus", def: "The difference between the maximum price a consumer is willing to pay for a good and the actual market price paid. Shown graphically as the area below the demand curve and above the equilibrium price." },
+  { id: 62, term: "Consumption", def: "Household spending on goods and services (durable and non-durable), typically the largest component of aggregate demand. Influenced by disposable income, interest rates, wealth, and consumer confidence." },
+  { id: 63, term: "Contractionary fiscal policy", def: "Government policy to reduce aggregate demand and combat demand-pull inflation by decreasing government expenditure, increasing taxes, or both, causing a leftward shift of the AD curve." },
+  { id: 64, term: "Contractionary monetary policy", def: "Central bank policy to reduce aggregate demand and control inflation by raising interest rates, which raises the cost of borrowing, reducing investment and consumption expenditure." },
+  { id: 65, term: "Corporate social responsibility", def: "The voluntary commitment by firms to go beyond legal requirements by considering the social, ethical, and environmental impacts of their activities on stakeholders and the wider community." },
+  { id: 66, term: "Cost-push inflation", def: "A sustained rise in the general price level caused by an increase in production costs (e.g. rising wages, raw material prices, or energy costs), shown as a leftward shift of the SRAS curve, reducing output while raising prices." },
+  { id: 67, term: "Costs of production", def: "All payments made by a firm to obtain and use factors of production, including wages, rent, raw materials, and capital. Divided into fixed costs (do not vary with output) and variable costs (vary with output)." },
+  { id: 68, term: "Crowding out", def: "The displacement of private investment that occurs when expansionary fiscal policy increases government borrowing, pushing up interest rates in the loanable funds market and reducing the availability of finance for private sector investment." },
+  { id: 69, term: "Current account", def: "The main component of the balance of payments, recording trade in goods, trade in services, primary income flows (investment income, wages), and secondary income transfers (foreign aid, remittances)." },
+  { id: 70, term: "Current account deficit", def: "When a country's current account balance is negative — total debits (payments abroad) exceed total credits (receipts from abroad) — indicating the country spends more abroad than it earns." },
+  { id: 71, term: "Current account surplus", def: "When a country's current account balance is positive — total credits exceed total debits — indicating the country earns more from abroad than it spends." },
+  { id: 72, term: "Customs union", def: "A form of economic integration where member countries eliminate internal trade barriers and adopt a common external tariff (CET) on imports from non-member countries." },
+  { id: 73, term: "Cyclical unemployment", def: "Unemployment caused by a fall in aggregate demand during an economic downturn, causing firms to reduce output and lay off workers. Also called demand-deficient unemployment; disappears when the economy recovers." },
+  { id: 74, term: "Debt relief", def: "The partial or complete cancellation, rescheduling, or reduction of a developing country's debt obligations, freeing government resources for development spending rather than debt repayments." },
+  { id: 75, term: "Default choice", def: "The option that occurs automatically when an individual takes no active decision. In behavioural economics, defaults powerfully shape outcomes because people tend to accept the status quo (status quo bias)." },
+  { id: 76, term: "Deflation", def: "A sustained decrease in the general price level (negative inflation rate). Problematic because it can trigger a deflationary spiral: falling prices → reduced spending → rising unemployment → further price falls." },
+  { id: 77, term: "Demand", def: "The quantities of a good or service that consumers are willing and able to purchase at various price levels during a given time period, ceteris paribus. Represented by a downward-sloping demand curve." },
+  { id: 78, term: "Demand curve", def: "A curve showing the inverse relationship between the price of a good and the quantity demanded, ceteris paribus. Slopes downward left to right due to the income effect and substitution effect." },
+  { id: 79, term: "Demand management", def: "Government use of fiscal and/or monetary policy to stabilise the economy by influencing aggregate demand, aiming to smooth the business cycle and achieve macroeconomic objectives." },
+  { id: 80, term: "Demand-pull inflation", def: "A sustained rise in the general price level caused by excessive aggregate demand relative to productive capacity — 'too much money chasing too few goods' — shown as a rightward shift of the AD curve beyond full employment output." },
+  { id: 81, term: "Demand-side policies", def: "Government policies — fiscal policy and monetary policy — that aim to shift aggregate demand to achieve macroeconomic objectives such as low unemployment, price stability, and economic growth." },
+  { id: 82, term: "Demerit goods", def: "Goods that are overprovided and overconsumed by the free market because their true social cost (including negative externalities) exceeds the private cost. Consumers also tend to underestimate the harmful effects (e.g. tobacco, alcohol)." },
+  { id: 83, term: "Depreciation (currency)", def: "A decrease in a currency's value relative to other currencies under a floating or managed exchange rate system, caused by reduced demand for or increased supply of that currency on the foreign exchange market." },
+  { id: 84, term: "Deregulation", def: "The removal or reduction of government rules and regulations governing private sector industries, aiming to promote competition, increase efficiency, and shift the LRAS curve rightward as a market-based supply-side policy." },
+  { id: 85, term: "Determinants of aggregate demand", def: "Non-price-level factors that shift the AD curve, including changes in consumer confidence, disposable income, interest rates, investment expectations, government fiscal policy, and net exports." },
+  { id: 86, term: "Devaluation", def: "A deliberate reduction in the official value of a currency by the central bank under a fixed or pegged exchange rate system, intended to boost export competitiveness by making exports cheaper and imports more expensive." },
+  { id: 87, term: "Development aid", def: "Concessional transfers of resources (money, goods, technical assistance) from donor countries or international organisations to developing countries, specifically intended to promote long-run economic development and poverty reduction." },
+  { id: 88, term: "Direct taxes", def: "Taxes levied directly on income and wealth, paid by the individual or firm to the government. Include income tax, corporation tax, capital gains tax, and inheritance tax. Cannot be shifted to others." },
+  { id: 89, term: "Disinflation", def: "A reduction in the rate of inflation — prices are still rising, but at a slower rate. Not to be confused with deflation, where the price level is falling." },
+  { id: 90, term: "Distribution of income", def: "The way in which a country's total national income is shared among its population, measured using tools such as the Lorenz curve and Gini coefficient. Addresses the 'for whom to produce' question." },
+  { id: 91, term: "Diversification", def: "A development strategy where a country broadens the range of goods and services it produces and exports, reducing dependency on a narrow base of primary commodities and the associated price volatility." },
+  { id: 92, term: "Economic development", def: "A sustained improvement in broad-based living standards and human well-being, encompassing rising incomes, reduced poverty and inequality, improved health and education, and greater economic freedom and stability." },
+  { id: 93, term: "Economic growth", def: "An increase in real GDP over time (actual growth), or an increase in an economy's productive capacity (potential growth). Sustained economic growth requires rightward shifts of the LRAS or outward shifts of the PPC." },
+  { id: 94, term: "Economic inequality", def: "Disparities in the distribution of income and/or wealth among individuals or groups within a society. Measured by the Gini coefficient; a value closer to 1 indicates greater inequality." },
+  { id: 95, term: "Economic integration", def: "A process by which countries reduce barriers between them, creating closer economic relationships. Levels include preferential trade areas, free trade areas, customs unions, common markets, and monetary unions." },
+  { id: 96, term: "Economics", def: "The social science that studies how individuals, firms, and governments make choices about allocating scarce resources to satisfy unlimited wants, and the consequences of those choices for society." },
+  { id: 97, term: "Economies of scale", def: "The reduction in long-run average total costs that occurs as a firm increases its scale of production. Caused by specialisation, bulk purchasing, indivisibilities, and spreading fixed costs over larger output." },
+  { id: 98, term: "Elasticity", def: "A measure of the sensitivity or responsiveness of one variable (e.g. quantity demanded) to a change in another variable (e.g. price or income), expressed as a percentage change ratio." },
+  { id: 99, term: "Entrepreneurship", def: "A factor of production involving the willingness to take financial risk by combining land, labour, and capital to organise production, innovate, and establish new businesses in pursuit of profit." },
+  { id: 100, term: "Equilibrium price", def: "The market-clearing price at which quantity demanded equals quantity supplied (Qd = Qs), so there is neither excess demand nor excess supply and no tendency for price to change." },
+  { id: 101, term: "Equilibrium quantity", def: "The quantity of a good bought and sold at the equilibrium price, where the demand and supply curves intersect and there is no pressure for quantity to change." },
+  { id: 102, term: "Equity", def: "Fairness in the distribution of income and wealth within society. Economists distinguish horizontal equity (equal treatment of equals) and vertical equity (higher earners pay proportionally more)." },
+  { id: 103, term: "Excess demand", def: "A situation where quantity demanded exceeds quantity supplied at a given price, creating a shortage. In a free market, upward pressure on price eliminates the shortage and restores equilibrium." },
+  { id: 104, term: "Excess supply", def: "A situation where quantity supplied exceeds quantity demanded at a given price, creating a surplus. In a free market, downward pressure on price eliminates the surplus and restores equilibrium." },
+  { id: 105, term: "Exchange rate", def: "The price of one currency expressed in terms of another currency, determined by supply and demand on the foreign exchange market under a floating system, or set by the central bank under a fixed system." },
+  { id: 106, term: "Excludable", def: "A property of goods where it is possible to prevent individuals from consuming the good unless they pay. Excludability allows firms to charge a price and profit from providing the good." },
+  { id: 107, term: "Expansionary fiscal policy", def: "Government policy to increase aggregate demand and stimulate a recessionary economy by increasing government expenditure, cutting taxes, or both, causing a rightward shift of the AD curve." },
+  { id: 108, term: "Expansionary monetary policy", def: "Central bank policy to increase aggregate demand by reducing interest rates, making borrowing cheaper and encouraging investment and consumption expenditure, shifting the AD curve rightward." },
+  { id: 109, term: "Expenditure approach", def: "A method of measuring GDP by summing all spending on final goods and services: GDP = C + I + G + (X − M). Represents the demand side of the economy." },
+  { id: 110, term: "Export promotion", def: "An outward-looking development strategy where a country achieves economic growth by expanding exports of manufactured goods, integrating into global markets rather than protecting domestic industries." },
+  { id: 111, term: "Export subsidy", def: "A government payment to domestic producers per unit of a good exported, reducing the selling price in foreign markets to boost export competitiveness. Considered a distortion of free trade under WTO rules." },
+  { id: 112, term: "Externality", def: "The spillover effect of production or consumption on third parties who are not part of the market transaction, and for which no compensation is paid. Can be negative (costs imposed) or positive (benefits conferred)." },
+  { id: 113, term: "Factors of production", def: "The resources used to produce goods and services: land (all natural resources), labour (human effort), capital (manufactured inputs), and entrepreneurship (risk-taking and innovation)." },
+  { id: 114, term: "Financial account", def: "A component of the balance of payments recording net flows of investment into and out of a country, including foreign direct investment (FDI), portfolio investment (stocks/bonds), and changes in reserve assets." },
+  { id: 115, term: "Fiscal policy", def: "A demand-side policy using government changes in tax rates and/or public expenditure to influence aggregate demand, stabilise the business cycle, and achieve macroeconomic objectives." },
+  { id: 116, term: "Fixed exchange rate", def: "An exchange rate system where the central bank pegs the currency at a set value against another currency or basket, intervening in foreign exchange markets (buying/selling currency) to maintain the peg." },
+  { id: 117, term: "Floating exchange rate", def: "An exchange rate system entirely determined by the forces of supply and demand on the foreign exchange market, with no government or central bank intervention." },
+  { id: 118, term: "Foreign aid", def: "Voluntary transfers of resources from donor countries or international organisations to recipient countries on concessional (below-market) terms, including grants, loans, and technical assistance." },
+  { id: 119, term: "Foreign direct investment (FDI)", def: "Cross-border investment by a firm (MNC) in productive assets in another country — factories, offices, or facilities — where the investor acquires at least 10% ownership, giving them significant managerial control." },
+  { id: 120, term: "Framing", def: "A behavioural economics bias where people respond differently to the same objective information depending on how it is presented. For example, describing a treatment as '90% effective' vs '10% failure rate' produces different decisions." },
+  { id: 121, term: "Free rider problem", def: "The tendency for individuals to consume a non-excludable good without paying for it, since they cannot be excluded. This causes the private market to underprovide or not provide the good at all, justifying government provision." },
+  { id: 122, term: "Free trade", def: "International trade conducted without any government-imposed restrictions such as tariffs, quotas, subsidies, or other protectionist barriers." },
+  { id: 123, term: "Free trade area", def: "A form of economic integration where member countries eliminate tariffs and other trade barriers on goods traded between them, while each member retains its own independent trade policy toward non-member countries." },
+  { id: 124, term: "Frictional unemployment", def: "Short-term unemployment that arises naturally as workers transition between jobs — searching for better opportunities or waiting to start a new position. Considered unavoidable and part of the natural rate of unemployment." },
+  { id: 125, term: "Full employment", def: "In the AD-AS model, the level of output (potential GDP) at which the economy operates on its LRAS curve, with unemployment equal only to its natural rate (structural + frictional + seasonal)." },
+  { id: 126, term: "Gains from trade", def: "The increase in total production and consumption that occurs when countries specialise in goods in which they have a comparative advantage and trade with each other, increasing the total availability of goods beyond what each country could produce alone." },
+  { id: 127, term: "Game theory", def: "A branch of economics analysing strategic decision-making among interdependent agents (players), where each player's optimal choice depends on the expected choices of others. Applied to oligopoly through tools like the payoff matrix and prisoner's dilemma." },
+  { id: 128, term: "GDP per capita", def: "Gross domestic product divided by the total population, providing an average measure of domestic output per person. Used as an indicator of average material living standards." },
+  { id: 129, term: "Gini coefficient", def: "A numerical measure of income inequality derived from the Lorenz curve, ranging from 0 (perfect equality — all income shared equally) to 1 (perfect inequality — one person has all income)." },
+  { id: 130, term: "Globalisation", def: "The growing economic interconnectedness and interdependence of countries worldwide through increasing flows of trade, finance, investment, labour, technology, and information across national borders." },
+  { id: 131, term: "GNI per capita", def: "Gross national income divided by total population. GNI equals GDP plus net income received from abroad (investment income and wages from abroad minus those sent abroad). Used in the HDI calculation." },
+  { id: 132, term: "Government debt", def: "The total accumulated stock of money owed by the central government to its creditors, arising from past budget deficits. Also called national debt or public debt. Distinct from the annual budget deficit (a flow)." },
+  { id: 133, term: "Government intervention", def: "Any action by the government to influence market outcomes, including taxes, subsidies, price controls, regulations, and direct provision, typically to correct market failures or achieve equity and macroeconomic objectives." },
+  { id: 134, term: "Gross domestic product (GDP)", def: "The total market value of all final goods and services produced within a country's borders during a given period (usually one year), regardless of the nationality of the producers." },
+  { id: 135, term: "Gross national income (GNI)", def: "The total income received by a country's residents from both domestic production and net income flows from abroad. GNI = GDP + income received from abroad − income sent abroad." },
+  { id: 136, term: "Human capital", def: "The stock of skills, knowledge, experience, and health embodied in the labour force, acquired through education and training. Investment in human capital shifts LRAS rightward and is a key driver of long-run economic growth." },
+  { id: 137, term: "Human Development Index (HDI)", def: "A composite index developed by the UNDP measuring development across three dimensions: health (life expectancy at birth), education (mean and expected years of schooling), and living standards (GNI per capita at PPP)." },
+  { id: 138, term: "Import substitution", def: "An inward-looking development strategy where a country promotes domestic production of manufactured goods — often behind protective tariffs — to reduce import dependency and build industrial capacity." },
+  { id: 139, term: "Income effect", def: "Part of the explanation for the law of demand: as the price of a good falls, consumers' real purchasing power rises, allowing them to buy more of the good even without a change in nominal income." },
+  { id: 140, term: "Income elasticity of demand", def: "A measure of the responsiveness of quantity demanded to a change in consumer income: YED = (% ΔQd) ÷ (% ΔY). Positive for normal goods; negative for inferior goods; greater than 1 for luxury goods." },
+  { id: 141, term: "Indirect taxes", def: "Taxes levied on the sale of goods and services — such as VAT, excise duties, and tariffs — paid initially by sellers, who typically pass them on (shift them) to consumers in the form of higher prices." },
+  { id: 142, term: "Infant industry", def: "A newly established domestic industry that lacks the economies of scale and experience to compete with established foreign firms. Often cited as a justification for temporary trade protection until the industry matures." },
+  { id: 143, term: "Inferior good", def: "A good for which demand decreases as consumer income rises (negative income elasticity of demand, YED < 0), because consumers switch to superior alternatives as they become wealthier (e.g. own-brand products, bus travel)." },
+  { id: 144, term: "Inflation", def: "A sustained increase in the general price level of goods and services in an economy over time, measured by the percentage change in the CPI. Reduces the purchasing power of money." },
+  { id: 145, term: "Inflation targeting", def: "A monetary policy framework in which the central bank commits to achieving a publicly announced target inflation rate (e.g. 2% in the UK), using interest rate adjustments as the primary policy instrument." },
+  { id: 146, term: "Inflationary gap", def: "A situation where actual real GDP exceeds potential GDP (the LRAS level), meaning the economy is operating beyond full employment. Creates upward pressure on wages and prices, causing demand-pull inflation." },
+  { id: 147, term: "Informal economy", def: "Economic activity that is unregistered, untaxed, and outside formal regulatory frameworks. Prevalent in developing countries and includes casual labour, street vending, and subsistence agriculture. Excluded from official GDP measurements." },
+  { id: 148, term: "Infrastructure", def: "The physical systems and structures that support economic activity — roads, railways, ports, power grids, water systems, and telecommunications. Public investment in infrastructure is a key interventionist supply-side policy." },
+  { id: 149, term: "Interest rate", def: "The cost of borrowing, or the return on saving, expressed as a percentage per year. The central bank's primary monetary policy instrument: raising rates contracts AD; lowering rates expands AD." },
+  { id: 150, term: "Interventionist supply-side policy", def: "Government policies designed to directly increase the productive capacity of the economy (shift LRAS rightward), including investment in education, healthcare, infrastructure, R&D, and industrial policy." },
+  { id: 151, term: "Investment", def: "Spending by private firms on capital goods (machinery, equipment, factories) and changes in inventories. Also includes government capital expenditure. A volatile component of AD, influenced heavily by interest rates and business confidence." },
+  { id: 152, term: "J-curve effect", def: "The short-run worsening of the trade balance following a currency depreciation, before it eventually improves. Occurs because import/export volumes adjust slowly (contracts already in place), while prices change immediately." },
+  { id: 153, term: "Keynesian multiplier", def: "The ratio by which an initial change in autonomous spending (e.g. government expenditure) leads to a larger final change in real GDP, due to successive rounds of spending. Multiplier = 1 ÷ (1 − MPC), where MPC is the marginal propensity to consume." },
+  { id: 154, term: "Labour", def: "A factor of production encompassing the physical and mental effort of human beings in the production of goods and services. The quantity of labour is measured by the number of workers and hours worked." },
+  { id: 155, term: "Labour market flexibility", def: "The ease with which wages and employment levels can adjust to changing market conditions. Increased by reducing minimum wages, weakening trade union power, and simplifying hiring/firing rules — a market-based supply-side policy." },
+  { id: 156, term: "Laissez-faire", def: "An economic philosophy favouring minimal government intervention in markets, allowing the price mechanism to allocate resources freely. Associated with Adam Smith's 'invisible hand' concept." },
+  { id: 157, term: "Land", def: "A factor of production encompassing all natural resources — agricultural land, minerals, forests, water, oil, and fisheries. Its supply is generally fixed, and its return is called rent." },
+  { id: 158, term: "Law of demand", def: "The inverse relationship between price and quantity demanded: as the price of a good rises, the quantity demanded falls (and vice versa), ceteris paribus. Results from the income and substitution effects." },
+  { id: 159, term: "Law of diminishing marginal returns", def: "As additional units of a variable factor (e.g. labour) are added to a fixed factor (e.g. capital) in the short run, beyond some point, the marginal product of the variable factor eventually falls." },
+  { id: 160, term: "Law of supply", def: "The positive relationship between price and quantity supplied: as the price of a good rises, the quantity supplied rises (and vice versa), ceteris paribus, because higher prices make production more profitable." },
+  { id: 161, term: "Long-run aggregate supply (LRAS)", def: "A vertical line at the potential (full employment) level of real GDP, showing that in the long run, output is determined by the economy's productive capacity — not the price level. Represents the economy's productive capacity." },
+  { id: 162, term: "Long-term growth", def: "An increase in an economy's productive capacity over time, shown by rightward shifts of the LRAS curve or outward shifts of the PPC. Driven by improvements in technology, human capital, physical capital, and institutional quality." },
+  { id: 163, term: "Lorenz curve", def: "A graphical representation of income distribution, plotting the cumulative percentage of income (vertical axis) against the cumulative percentage of population (horizontal axis). The further the curve bows from the 45° line of equality, the greater the inequality." },
+  { id: 164, term: "Marginal benefit", def: "The additional satisfaction or utility gained by consuming one more unit of a good or service. Forms the basis of demand; allocative efficiency requires MB = MC at the margin." },
+  { id: 165, term: "Marginal cost", def: "The additional cost incurred by producing one more unit of output. In the short run, MC eventually rises due to diminishing marginal returns. Profit maximisation requires MC = MR." },
+  { id: 166, term: "Marginal propensity to consume (MPC)", def: "The proportion of additional (marginal) income that households spend on domestically produced goods and services. MPC = ΔC ÷ ΔY. Determines the size of the Keynesian multiplier: higher MPC → larger multiplier." },
+  { id: 167, term: "Marginal revenue", def: "The additional revenue received from selling one more unit of output. In perfect competition, MR = price (constant). In monopoly/monopolistic competition, MR is below the demand curve and falls as output increases." },
+  { id: 168, term: "Marginal social benefit (MSB)", def: "The total additional benefit to society from consuming one more unit of a good, equal to marginal private benefit (MPB) plus any positive externality. MSB = MPB when no positive consumption externality exists." },
+  { id: 169, term: "Marginal social cost (MSC)", def: "The total additional cost to society from producing one more unit of a good, equal to marginal private cost (MPC) plus any negative externality. MSC = MPC when no negative production externality exists." },
+  { id: 170, term: "Market equilibrium", def: "The state where quantity demanded equals quantity supplied at the prevailing price, with no tendency for either price or quantity to change spontaneously." },
+  { id: 171, term: "Market failure", def: "A situation where the free market, operating without intervention, fails to allocate resources efficiently — resulting in MSB ≠ MSC. Causes include externalities, public goods, asymmetric information, and market power." },
+  { id: 172, term: "Market power", def: "The ability of a firm to set price above marginal cost (P > MC) because it faces a downward-sloping demand curve for its product. Greater market power → greater deviation from allocative efficiency." },
+  { id: 173, term: "Market-based supply-side policy", def: "Policies that promote the efficient operation of markets to shift LRAS rightward, including reducing income taxes, cutting business regulations, privatisation, trade liberalisation, and labour market flexibility reforms." },
+  { id: 174, term: "Marshall-Lerner condition", def: "The condition under which a currency depreciation will improve the current account balance: the sum of the price elasticities of demand for exports and imports must be greater than 1 (PEDx + PEDm > 1)." },
+  { id: 175, term: "Merit goods", def: "Goods that are underprovided by the free market because consumers undervalue them (due to imperfect information or positive externalities), resulting in consumption below the socially optimal level. Examples include healthcare and education." },
+  { id: 176, term: "Microfinance", def: "The provision of small loans, savings accounts, and other financial services to low-income individuals or groups in developing countries who lack access to formal banking, enabling investment in small businesses and poverty reduction." },
+  { id: 177, term: "Minimum wage", def: "A legally mandated price floor set above the equilibrium wage rate, ensuring workers receive a minimum hourly pay. Creates excess supply of labour (unemployment) in theory, but also raises incomes for those employed." },
+  { id: 178, term: "Mixed economy", def: "An economic system where both the government (public sector) and private firms (private sector) make resource allocation decisions, combining elements of planned and free market systems." },
+  { id: 179, term: "Monetary policy", def: "A demand-side policy operated by the central bank, primarily using changes in the interest rate to influence the level of aggregate demand in order to achieve macroeconomic objectives such as low inflation and stable growth." },
+  { id: 180, term: "Monetary union", def: "The highest level of economic integration, where member countries adopt a single shared currency managed by a common central bank (e.g. the Eurozone), eliminating exchange rate fluctuations between members." },
+  { id: 181, term: "Monopolistic competition", def: "A market structure with many firms selling differentiated products, some degree of pricing power, easy entry and exit, and no collusion. Firms earn normal profit in the long run due to free entry eroding abnormal profits." },
+  { id: 182, term: "Monopoly", def: "A market structure with a single dominant firm producing a unique good with no close substitutes, protected by high barriers to entry, giving it significant market power to set price above marginal cost (P > MC)." },
+  { id: 183, term: "Moral hazard", def: "A form of market failure arising from asymmetric information after a transaction, where one party takes on greater risk because they do not bear the full consequences — typically because another party (e.g. an insurer) absorbs the losses." },
+  { id: 184, term: "Multinational corporation (MNC)", def: "A firm headquartered in one country that owns and controls productive operations (with at least 10% ownership stake) in one or more foreign countries through foreign direct investment (FDI)." },
+  { id: 185, term: "Natural monopoly", def: "A market where one firm can supply the entire market at a lower average total cost than two or more competing firms, due to very large economies of scale relative to market demand. Often justifies government regulation or public ownership." },
+  { id: 186, term: "Natural rate of unemployment", def: "The unemployment rate when the economy is at potential output (on the LRAS), consisting of structural, frictional, and seasonal unemployment. It is not zero; even at full employment, some unemployment persists." },
+  { id: 187, term: "Negative externality", def: "A cost imposed on third parties (not involved in the transaction) as a by-product of production or consumption. Causes overproduction relative to the social optimum (MSC > MSB), creating welfare loss (e.g. pollution from a factory)." },
+  { id: 188, term: "Net exports", def: "The value of a country's total exports of goods and services minus the value of its total imports (X − M). A positive value (trade surplus) adds to AD; a negative value (trade deficit) reduces AD." },
+  { id: 189, term: "Nominal GDP", def: "The market value of all final goods and services produced within a country, measured at current prices without adjusting for inflation. Not suitable for comparing real output over time." },
+  { id: 190, term: "Non-excludable", def: "A property where it is impossible or impractical to prevent individuals from consuming a good, even if they have not paid. Combined with non-rivalry, this defines a pure public good and causes the free rider problem." },
+  { id: 191, term: "Non-rivalrous", def: "A property where one person's consumption of a good does not reduce its availability to others. Street lighting and national defence are classic examples. Combined with non-excludability, defines a pure public good." },
+  { id: 192, term: "Normal good", def: "A good for which demand increases as consumer income rises (positive income elasticity of demand, YED > 0). Luxuries have YED > 1; necessities have 0 < YED < 1." },
+  { id: 193, term: "Normal profit", def: "The minimum level of profit (total revenue = total cost, including implicit costs) needed to keep a firm in its current industry in the long run. Represents the opportunity cost of the entrepreneur's resources." },
+  { id: 194, term: "Normative economics", def: "Statements about how the economy ought to be, based on value judgements. Normative statements contain words like 'should' or 'ought' and cannot be verified or refuted by empirical data alone (e.g. 'inequality should be reduced')." },
+  { id: 195, term: "Nudge", def: "A policy tool based on behavioural economics that steers individuals toward better choices through the design of choice architecture — without banning options or using financial incentives. For example, making healthy food the default option in a canteen." },
+  { id: 196, term: "Oligopoly", def: "A market structure dominated by a small number of large, mutually interdependent firms selling differentiated or homogeneous products, protected by significant barriers to entry. Firms' decisions are influenced by rivals' expected reactions." },
+  { id: 197, term: "Open market operations", def: "The central bank's buying or selling of government bonds to/from commercial banks to adjust the money supply and influence interest rates. Buying bonds injects money (expansionary); selling bonds withdraws money (contractionary)." },
+  { id: 198, term: "Opportunity cost", def: "The value of the next best alternative foregone when making a choice. The fundamental concept underlying all economic decision-making, reflecting the real cost of any decision." },
+  { id: 199, term: "Perfect competition", def: "A theoretical market structure with many buyers and sellers, homogeneous (identical) products, perfect information, no barriers to entry or exit, and no individual market power — firms are price takers (P = MR = AR)." },
+  { id: 200, term: "Phillips curve", def: "A curve showing the empirical relationship between inflation and unemployment. The short-run Phillips curve shows a negative trade-off: lower unemployment is associated with higher inflation. The long-run curve is vertical at the natural rate of unemployment." },
+  { id: 201, term: "Pigouvian tax", def: "An indirect tax equal to the marginal external cost of production, designed to internalise a negative externality by raising the private cost to equal the social cost (MSC), thereby reducing output to the socially optimal level." },
+  { id: 202, term: "Positive economics", def: "Objective, fact-based economic statements that can in principle be tested and verified or refuted by empirical evidence (e.g. 'a price ceiling below equilibrium causes a shortage'). Describes the economy as it is." },
+  { id: 203, term: "Positive externality", def: "A benefit conferred on third parties as a by-product of production or consumption. Causes underproduction/underconsumption relative to the social optimum (MSB > MSC), creating welfare loss (e.g. vaccinations benefiting the wider community)." },
+  { id: 204, term: "Potential output", def: "The level of real GDP the economy can produce when all factors of production are fully and efficiently employed — the LRAS level. Operating above potential creates inflation; below creates unemployment." },
+  { id: 205, term: "Poverty cycle", def: "A self-reinforcing mechanism of deprivation: low income → low savings → low investment → low productivity → low growth → continued low income. Traps families and countries in persistent poverty across generations." },
+  { id: 206, term: "Price ceiling", def: "A government-imposed maximum legal price set below the free market equilibrium price, intended to make goods more affordable. Results in persistent excess demand (shortage) and may cause non-price rationing." },
+  { id: 207, term: "Price elasticity of demand (PED)", def: "The responsiveness of quantity demanded to a change in price: PED = (% ΔQd) ÷ (% ΔP). Always negative (inverse relationship). |PED| > 1: elastic demand; |PED| < 1: inelastic demand; |PED| = 1: unit elastic." },
+  { id: 208, term: "Price elasticity of supply (PES)", def: "The responsiveness of quantity supplied to a change in price: PES = (% ΔQs) ÷ (% ΔP). Always positive. PES > 1: elastic supply; PES < 1: inelastic supply. Depends on time period, spare capacity, and factor mobility." },
+  { id: 209, term: "Price floor", def: "A government-imposed minimum legal price set above the free market equilibrium price, intended to support producers' incomes. Results in persistent excess supply (surplus), e.g. agricultural price supports or minimum wage." },
+  { id: 210, term: "Price mechanism", def: "The system by which prices, determined by the interaction of supply and demand in competitive markets, act as signals to allocate scarce resources between competing uses — the 'invisible hand' of the market." },
+  { id: 211, term: "Producer surplus", def: "The difference between the price a producer actually receives for a good and the minimum price they would have been willing to accept. Shown graphically as the area above the supply curve and below the market price." },
+  { id: 212, term: "Product differentiation", def: "The strategy of making a firm's product distinct from competitors' through real or perceived differences in quality, features, design, branding, or location. Gives firms some pricing power and is central to monopolistic competition and oligopoly." },
+  { id: 213, term: "Production possibilities curve (PPC)", def: "A curve showing all maximum combinations of two goods or services an economy can produce given its fixed resources, technology, and full employment. Points inside the PPC indicate inefficiency; outside are unattainable; outward shifts represent economic growth." },
+  { id: 214, term: "Profit maximisation", def: "A firm's goal of producing the level of output where the difference between total revenue and total cost is greatest — achieved where marginal cost equals marginal revenue (MC = MR), the profit-maximising rule." },
+  { id: 215, term: "Progressive taxation", def: "A tax system where the average tax rate rises as income increases — higher-income individuals pay a larger proportion of their income in tax. Reduces post-tax income inequality; income tax is the primary example." },
+  { id: 216, term: "Proportional taxation", def: "A tax system where the average tax rate remains constant regardless of income level — all taxpayers pay the same percentage of their income. Also called a flat tax." },
+  { id: 217, term: "Public good", def: "A good that is simultaneously non-excludable (cannot be withheld from non-payers) and non-rivalrous (one person's use does not reduce availability to others). The free rider problem means private markets will not supply public goods." },
+  { id: 218, term: "Purchasing power parity (PPP)", def: "An exchange rate adjustment that equalises the purchasing power of different currencies by accounting for differences in domestic price levels, enabling more accurate cross-country comparisons of living standards (e.g. in HDI calculations)." },
+  { id: 219, term: "Quantitative easing", def: "An unconventional monetary policy where the central bank creates new money to purchase long-term financial assets (e.g. government bonds) from commercial banks, increasing money supply and reducing long-term interest rates when short-term rates are already near zero." },
+  { id: 220, term: "Quota", def: "A trade protection measure setting a legal maximum on the quantity (or value) of a specific good that can be imported over a given period. Creates a wedge between domestic and world supply, raising the domestic price." },
+  { id: 221, term: "Real GDP", def: "Gross domestic product adjusted for changes in the price level using a price index, allowing meaningful comparisons of actual output across time periods by removing the distortion of inflation." },
+  { id: 222, term: "Recession", def: "A period of negative economic growth (falling real GDP) lasting at least two consecutive quarters. Associated with rising unemployment, falling investment, reduced consumer confidence, and declining tax revenues." },
+  { id: 223, term: "Recessionary gap", def: "A situation where actual real GDP is below potential GDP (the LRAS level), meaning the economy has unused productive capacity. Unemployment exceeds the natural rate, creating deflationary pressure on wages and prices." },
+  { id: 224, term: "Redistribution of income", def: "Government policies that alter the after-tax and after-transfer distribution of income to achieve greater equity — including progressive taxation, means-tested transfer payments, and in-kind benefits such as public services." },
+  { id: 225, term: "Regressive taxation", def: "A tax system where the average tax rate falls as income increases — lower-income individuals pay a higher proportion of their income in tax. Indirect taxes (e.g. VAT) are typically regressive." },
+  { id: 226, term: "Relative poverty", def: "A condition where individuals have insufficient income to afford an acceptable standard of living relative to the norms of the society in which they live, commonly defined as income below 50–60% of the national median income." },
+  { id: 227, term: "Resource allocation", def: "The process of distributing scarce factors of production among different productive uses to determine what goods and services are produced, how they are produced, and for whom." },
+  { id: 228, term: "Scarcity", def: "The fundamental economic problem: limited resources (land, labour, capital, entrepreneurship) are insufficient to satisfy unlimited human wants, making choices and trade-offs necessary." },
+  { id: 229, term: "Short-run aggregate supply (SRAS)", def: "An upward-sloping curve showing the positive relationship between the price level and real GDP that firms are willing to supply in the short run, when wages and other input costs are fixed." },
+  { id: 230, term: "Social surplus", def: "The sum of consumer surplus and producer surplus in a market. Maximised at the competitive equilibrium where MSB = MSC. Market failures reduce social surplus, creating a deadweight welfare loss." },
+  { id: 231, term: "Specialisation", def: "The concentration of productive effort on a narrow range of tasks, goods, or services in which an individual, firm, or country has a comparative advantage, enabling greater efficiency and gains from trade." },
+  { id: 232, term: "Structural unemployment", def: "Unemployment arising from a mismatch between the skills workers possess and the skills demanded by employers, caused by technological change, industrial decline, or shifts in the pattern of demand. Long-term and difficult to resolve." },
+  { id: 233, term: "Subsidy", def: "A payment by the government to producers per unit of output, lowering their production costs and shifting the supply curve rightward. Used to correct positive externalities, support industries, or reduce consumer prices." },
+  { id: 234, term: "Substitute goods", def: "Goods that can be used in place of each other to satisfy a similar want, so an increase in the price of one increases demand for the other. Cross-price elasticity of demand is positive for substitutes." },
+  { id: 235, term: "Substitution effect", def: "Part of the explanation for the law of demand: as the price of a good rises, consumers switch to relatively cheaper substitute goods, reducing quantity demanded of the more expensive good." },
+  { id: 236, term: "Supply", def: "The quantities of a good or service that producers are willing and able to offer for sale at various price levels during a given time period, ceteris paribus. Represented by an upward-sloping supply curve." },
+  { id: 237, term: "Supply curve", def: "A curve showing the positive relationship between the price of a good and the quantity supplied, ceteris paribus. Higher prices make production more profitable, incentivising greater supply." },
+  { id: 238, term: "Supply-side policies", def: "Policies aiming to increase an economy's productive capacity and shift the LRAS curve rightward, improving long-run economic growth and reducing inflationary pressure. Can be market-based or interventionist." },
+  { id: 239, term: "Sustainability", def: "The ability to meet present needs without compromising the ability of future generations to meet their own needs, by ensuring that the environment and natural resources are not depleted or damaged beyond repair." },
+  { id: 240, term: "Sustainable development", def: "Economic development that satisfies the needs of the present without compromising the environmental, social, and economic ability of future generations to meet their own needs — integrating economic, social, and environmental goals." },
+  { id: 241, term: "Tariffs", def: "Taxes levied on imported goods, raising their price in the domestic market. The most common form of trade protection; reduces import volume, raises government revenue, and protects domestic producers but harms consumers and global efficiency." },
+  { id: 242, term: "Theory of comparative advantage", def: "David Ricardo's theory that mutually beneficial trade occurs when countries specialise in producing goods with the lowest opportunity cost, even if one country has an absolute advantage in producing all goods." },
+  { id: 243, term: "Total revenue", def: "The total amount received by a firm from selling its output, calculated as price multiplied by quantity (TR = P × Q). For a firm with market power, maximised where MR = 0 (unit elastic demand)." },
+  { id: 244, term: "Tradable permits", def: "Government-issued licences allowing firms to emit a specified quantity of a pollutant. Firms may buy and sell permits, creating a market-based price for pollution that incentivises emissions reduction at the lowest possible cost." },
+  { id: 245, term: "Trade creation", def: "A welfare-improving effect of a trading bloc where high-cost domestic production is replaced by lower-cost imports from a partner country, increasing productive efficiency and consumer surplus." },
+  { id: 246, term: "Trade diversion", def: "A welfare-reducing effect of a trading bloc where lower-cost imports from non-member countries are replaced by higher-cost imports from member countries due to the common external tariff." },
+  { id: 247, term: "Trade liberalisation", def: "The removal or reduction of trade barriers such as tariffs, quotas, and subsidies, allowing markets to determine the pattern and volume of international trade more freely." },
+  { id: 248, term: "Trade protection", def: "Government policies that restrict imports to shield domestic industries from foreign competition, including tariffs, quotas, subsidies, and administrative barriers. Reduces global productive efficiency but may achieve specific policy goals." },
+  { id: 249, term: "Trading bloc", def: "A group of countries that have agreed to reduce or eliminate trade barriers among themselves, thereby creating preferential trade conditions for member nations." },
+  { id: 250, term: "Transfer payments", def: "Government payments to individuals that are not in exchange for any current productive activity — such as unemployment benefits, pensions, and disability allowances — used to redistribute income toward lower-income households." },
+  { id: 251, term: "Unemployment", def: "People of working age who are not currently employed but are actively seeking work and available to start. Measured by the unemployment rate; includes frictional, structural, seasonal, and cyclical unemployment." },
+  { id: 252, term: "Unemployment rate", def: "The number of unemployed people expressed as a percentage of the total labour force (employed + unemployed): unemployment rate = (unemployed ÷ labour force) × 100." },
+  { id: 253, term: "Utility", def: "The satisfaction, benefit, or well-being that a consumer derives from consuming a good or service. Marginal utility is the additional utility from consuming one more unit; typically diminishes as consumption increases." },
+  { id: 254, term: "Welfare loss", def: "The reduction in total social surplus (consumer + producer surplus) caused by market failure or distortionary government intervention, shown as a triangular area on a supply-and-demand or externality diagram." },
+  { id: 255, term: "World Trade Organization (WTO)", def: "An international body that establishes and enforces the rules of international trade, provides a forum for trade negotiations, resolves trade disputes between member countries, and promotes trade liberalisation globally." },
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+const STORAGE_KEY = "ib-econ-terms-v3";
+const loadState = () => { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; } };
+const saveState = s => localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+
+let state = {
+  known: {},
+  dailyHistory: [],
+  dailySet: null,
+  dailyPhase: "learn",
+  dailyQuizIdx: 0,
+  dailyAnswers: {},
+  flashDeck: shuffle([...ALL_TERMS]),
+  flashIdx: 0,
+  flashFlipped: false,
+  matchTerms: [],
+  matchDefs: [],
+  matchSelected: { term: null, def: null },
+  matchMatched: [],
+  matchWrong: null,
+  writeTerms: [],
+  writeIdx: 0,
+  writeInput: "",
+  writeResult: null,
+  writeScores: [],
+  emailAddress: "",
+  emailLog: [],
+  sendingEmail: false,
+  currentTab: "terms",
+};
+
+// Restore persisted state
+(function() {
+  const saved = loadState();
+  if (saved.known) state.known = saved.known;
+  if (saved.dailyHistory) state.dailyHistory = saved.dailyHistory;
+  if (saved.dailySet) state.dailySet = saved.dailySet;
+  if (saved.dailyPhase) state.dailyPhase = saved.dailyPhase;
+  if (saved.emailAddress) state.emailAddress = saved.emailAddress;
+  if (saved.emailLog) state.emailLog = saved.emailLog;
+})();
+
+function persist() {
+  saveState({
+    known: state.known,
+    dailyHistory: state.dailyHistory,
+    dailySet: state.dailySet,
+    dailyPhase: state.dailyPhase,
+    emailAddress: state.emailAddress,
+    emailLog: state.emailLog,
+  });
 }
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(React.createElement(App));
+// ─── UTILS ────────────────────────────────────────────────────────────────────
+function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+function knownCount() { return Object.keys(state.known).filter(k => state.known[k]).length; }
+function totalCount() { return ALL_TERMS.length; }
+function progress() { return Math.round((knownCount() / totalCount()) * 100); }
+
+// ─── HEADER & PROGRESS ───────────────────────────────────────────────────────
+function updateProgress() {
+  const kc = knownCount(), tc = totalCount(), p = progress();
+  document.getElementById("hdr-known").textContent = kc;
+  document.getElementById("hdr-total").textContent = tc;
+  document.getElementById("progress-fill").style.width = p + "%";
+  // Email stats
+  document.getElementById("email-stat-known").textContent = `${kc}/${tc}`;
+  document.getElementById("email-stat-remaining").textContent = tc - kc;
+  document.getElementById("email-stat-sent").textContent = state.emailLog.length;
+}
+
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const tab = btn.dataset.tab;
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+    document.getElementById("panel-" + tab).classList.add("active");
+    state.currentTab = tab;
+    if (tab === "daily") renderDaily();
+    if (tab === "flash") renderFlash();
+    if (tab === "match") renderMatch();
+    if (tab === "write") renderWrite();
+    if (tab === "email") renderEmail();
+  });
+});
+
+// ─── TERMS TAB ────────────────────────────────────────────────────────────────
+function renderTerms(query) {
+  const filtered = query
+    ? ALL_TERMS.filter(t => t.term.toLowerCase().includes(query.toLowerCase()) || t.def.toLowerCase().includes(query.toLowerCase()))
+    : ALL_TERMS;
+
+  document.getElementById("search-meta").textContent =
+    filtered.length + " terms" + (query ? ` matching "${query}"` : "");
+
+  const list = document.getElementById("terms-list");
+  list.innerHTML = filtered.map((t, i) => `
+    <div class="card term-row fade-up" style="animation-delay:${Math.min(i*10,250)}ms">
+      <button class="check-btn ${state.known[t.id] ? "checked" : ""}" data-id="${t.id}" aria-label="Mark as known">✓</button>
+      <div style="flex:1;min-width:0">
+        <p class="term-name ${state.known[t.id] ? "known" : ""}">${escHtml(t.term)}</p>
+        <p class="term-def ${state.known[t.id] ? "known" : ""}">${escHtml(t.def)}</p>
+      </div>
+    </div>
+  `).join("");
+
+  list.querySelectorAll(".check-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = +btn.dataset.id;
+      state.known[id] = !state.known[id];
+      persist();
+      updateProgress();
+      renderTerms(document.getElementById("search-input").value);
+    });
+  });
+}
+
+document.getElementById("search-input").addEventListener("input", e => renderTerms(e.target.value));
+renderTerms("");
+
+// ─── DAILY 5 ─────────────────────────────────────────────────────────────────
+function generateDaily() {
+  const available = ALL_TERMS.filter(t => !state.known[t.id] && !state.dailyHistory.includes(t.id));
+  const pool = available.length >= 5 ? available : ALL_TERMS.filter(t => !state.known[t.id]);
+  const selected = shuffle(pool).slice(0, 5);
+  state.dailySet = selected;
+  state.dailyPhase = "learn";
+  state.dailyQuizIdx = 0;
+  state.dailyAnswers = {};
+  state.dailyHistory = [...state.dailyHistory, ...selected.map(t => t.id)];
+  persist();
+  renderDaily();
+}
+
+function renderDaily() {
+  const el = document.getElementById("daily-content");
+  if (!state.dailySet) {
+    el.innerHTML = `
+      <div class="center fade-up" style="padding:60px 0">
+        <p class="big-emoji">🎯</p>
+        <h2 class="section-title">Daily 5</h2>
+        <p class="section-sub" style="max-width:360px;margin:0 auto 24px">Learn 5 new terms, then get quizzed on them. Terms you've already learnt won't appear.</p>
+        <button class="btn btn-primary" id="daily-start-btn">Start Today's 5</button>
+      </div>`;
+    document.getElementById("daily-start-btn").addEventListener("click", generateDaily);
+    return;
+  }
+
+  if (state.dailyPhase === "learn") {
+    el.innerHTML = `
+      <div class="fade-up">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+          <h2 style="font-size:18px;font-weight:600">Learn these 5 terms</h2>
+          <span style="font-size:12px;color:var(--muted)">Read carefully, then quiz yourself</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          ${state.dailySet.map((t, i) => `
+            <div class="card fade-up" style="animation-delay:${i*80}ms">
+              <p style="font-size:15px;font-weight:600;color:var(--gold);margin-bottom:6px">${escHtml(t.term)}</p>
+              <p style="font-size:13px;color:var(--subtle);line-height:1.6">${escHtml(t.def)}</p>
+            </div>`).join("")}
+        </div>
+        <div class="center mt24">
+          <button class="btn btn-primary" id="daily-quiz-btn">I'm ready — Quiz me</button>
+        </div>
+      </div>`;
+    document.getElementById("daily-quiz-btn").addEventListener("click", () => {
+      state.dailyPhase = "quiz";
+      state.dailyQuizIdx = 0;
+      state.dailyAnswers = {};
+      renderDaily();
+    });
+    return;
+  }
+
+  if (state.dailyPhase === "quiz") {
+    const current = state.dailySet[state.dailyQuizIdx];
+    const wrongOptions = shuffle(ALL_TERMS.filter(t => t.id !== current.id)).slice(0, 3);
+    const options = shuffle([current, ...wrongOptions]);
+    const answered = state.dailyAnswers[state.dailyQuizIdx] !== undefined;
+
+    el.innerHTML = `
+      <div class="fade-up">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+          <h2 style="font-size:18px;font-weight:600">Quiz — ${state.dailyQuizIdx + 1}/5</h2>
+          <div class="quiz-dots">
+            ${state.dailySet.map((_, i) => {
+              let bg;
+              if (i < state.dailyQuizIdx) bg = state.dailyAnswers[i] ? "rgba(120,180,120,0.6)" : "rgba(200,100,100,0.5)";
+              else if (i === state.dailyQuizIdx) bg = "var(--gold)";
+              else bg = "rgba(255,255,255,0.08)";
+              return `<div class="quiz-dot" style="background:${bg}"></div>`;
+            }).join("")}
+          </div>
+        </div>
+        <div class="card mb16" style="padding:24px;text-align:center">
+          <p style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">What is the definition of</p>
+          <p style="font-size:22px;font-family:'Playfair Display',serif;color:var(--gold)">${escHtml(current.term)}</p>
+        </div>
+        <div>
+          ${options.map(opt => {
+            const isCorrect = opt.id === current.id;
+            const wasChosen = state.dailyAnswers[state.dailyQuizIdx] === opt.id;
+            let cls = "";
+            if (answered) {
+              if (isCorrect) cls = "correct";
+              else if (wasChosen) cls = "wrong-pick";
+            }
+            return `<button class="quiz-option ${cls}" data-optid="${opt.id}" ${answered ? "disabled" : ""}>${escHtml(opt.def)}</button>`;
+          }).join("")}
+        </div>
+        ${answered ? `
+          <div class="center mt20">
+            ${state.dailyQuizIdx < 4
+              ? `<button class="btn btn-primary" id="daily-next-btn">Next →</button>`
+              : `<button class="btn btn-primary" id="daily-results-btn">See Results</button>`}
+          </div>` : ""}
+      </div>`;
+
+    if (!answered) {
+      el.querySelectorAll(".quiz-option").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.dailyAnswers[state.dailyQuizIdx] = +btn.dataset.optid;
+          renderDaily();
+        });
+      });
+    } else {
+      const nb = document.getElementById("daily-next-btn");
+      const rb = document.getElementById("daily-results-btn");
+      if (nb) nb.addEventListener("click", () => { state.dailyQuizIdx++; renderDaily(); });
+      if (rb) rb.addEventListener("click", () => { state.dailyPhase = "results"; renderDaily(); });
+    }
+    return;
+  }
+
+  // results
+  const correct = Object.values(state.dailyAnswers).filter((a, i) => a === state.dailySet[i]?.id).length;
+  el.innerHTML = `
+    <div class="fade-up center">
+      <p class="big-emoji">${correct >= 4 ? "🎉" : "📚"}</p>
+      <h2 class="section-title">${correct} / 5 correct</h2>
+      <p class="section-sub">Tick off the ones you know</p>
+      <div style="display:flex;flex-direction:column;gap:8px;text-align:left;margin-bottom:24px">
+        ${state.dailySet.map((t, i) => {
+          const ok = state.dailyAnswers[i] === t.id;
+          return `
+            <div class="card" style="display:flex;gap:14px;align-items:flex-start;border-color:${ok ? "rgba(120,180,120,0.2)" : "rgba(200,100,100,0.15)"}">
+              <button class="check-btn ${state.known[t.id] ? "checked" : ""}" data-id="${t.id}">✓</button>
+              <div>
+                <p style="font-size:14px;font-weight:600;color:${ok ? "var(--green)" : "var(--red)"}">
+                  ${ok ? "✓" : "✗"} ${escHtml(t.term)}
+                </p>
+                <p style="font-size:12px;color:var(--muted);margin-top:2px;line-height:1.5">${escHtml(t.def)}</p>
+              </div>
+            </div>`;
+        }).join("")}
+      </div>
+      <button class="btn btn-primary" id="daily-newset-btn">New Set of 5</button>
+    </div>`;
+
+  el.querySelectorAll(".check-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = +btn.dataset.id;
+      state.known[id] = !state.known[id];
+      persist(); updateProgress();
+      btn.classList.toggle("checked", !!state.known[id]);
+      btn.style.color = state.known[id] ? "var(--gold)" : "transparent";
+    });
+  });
+  document.getElementById("daily-newset-btn").addEventListener("click", () => {
+    state.dailySet = null; state.dailyPhase = "learn"; renderDaily();
+  });
+}
+
+// ─── FLASHCARDS ───────────────────────────────────────────────────────────────
+function renderFlash() {
+  const deck = state.flashDeck;
+  const idx = state.flashIdx;
+  const flipped = state.flashFlipped;
+  const card = deck[idx];
+
+  document.getElementById("flash-counter").textContent = `${idx + 1} / ${deck.length}`;
+
+  const flashEl = document.getElementById("flashcard");
+  flashEl.className = flipped ? "flipped" : "";
+  flashEl.onclick = () => { state.flashFlipped = !state.flashFlipped; renderFlash(); };
+
+  document.getElementById("flashcard-inner").innerHTML = !flipped
+    ? `<div style="animation:flipIn 0.3s ease">
+        <p style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Term</p>
+        <p style="font-size:24px;font-family:'Playfair Display',serif;color:var(--text)">${escHtml(card.term)}</p>
+        <p style="font-size:12px;color:#4a4d5e;margin-top:16px">Tap to reveal</p>
+      </div>`
+    : `<div style="animation:flipIn 0.3s ease">
+        <p style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Definition</p>
+        <p style="font-size:14px;color:#c0c3d4;line-height:1.65">${escHtml(card.def)}</p>
+      </div>`;
+
+  document.getElementById("flash-controls").innerHTML = `
+    <button class="btn btn-primary btn-sm" id="flash-prev" ${idx === 0 ? "disabled" : ""} style="opacity:${idx === 0 ? 0.3 : 1}">← Prev</button>
+    <button class="btn btn-sm" id="flash-shuffle" style="background:rgba(255,255,255,0.04);color:var(--muted)">Shuffle</button>
+    <button class="btn btn-primary btn-sm" id="flash-next" ${idx >= deck.length - 1 ? "disabled" : ""} style="opacity:${idx >= deck.length - 1 ? 0.3 : 1}">Next →</button>
+  `;
+  document.getElementById("flash-prev").addEventListener("click", () => {
+    state.flashIdx--; state.flashFlipped = false; renderFlash();
+  });
+  document.getElementById("flash-shuffle").addEventListener("click", () => {
+    state.flashDeck = shuffle([...ALL_TERMS]); state.flashIdx = 0; state.flashFlipped = false; renderFlash();
+  });
+  document.getElementById("flash-next").addEventListener("click", () => {
+    state.flashIdx++; state.flashFlipped = false; renderFlash();
+  });
+}
+
+// ─── MATCH ────────────────────────────────────────────────────────────────────
+function initMatch() {
+  const selected = shuffle([...ALL_TERMS]).slice(0, 6);
+  state.matchTerms = shuffle(selected.map(t => ({ id: t.id, term: t.term })));
+  state.matchDefs = shuffle(selected.map(t => ({ id: t.id, def: t.def })));
+  state.matchMatched = [];
+  state.matchSelected = { term: null, def: null };
+  state.matchWrong = null;
+}
+
+function renderMatch() {
+  const el = document.getElementById("match-content");
+  if (state.matchTerms.length === 0) initMatch();
+
+  if (state.matchMatched.length === 6) {
+    el.innerHTML = `
+      <div class="center fade-up" style="padding:60px 0">
+        <p class="big-emoji">🎉</p>
+        <h2 class="section-title mb16">All matched!</h2>
+        <button class="btn btn-primary" id="match-again-btn">Play Again</button>
+      </div>`;
+    document.getElementById("match-again-btn").addEventListener("click", () => { initMatch(); renderMatch(); });
+    return;
+  }
+
+  el.innerHTML = `
+    <div class="fade-up">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h2 style="font-size:16px;font-weight:600">Match terms to definitions</h2>
+        <span style="font-size:12px;color:var(--muted)">${state.matchMatched.length}/6</span>
+      </div>
+      <div class="match-grid">
+        <div class="match-col">
+          <p class="match-col-label">Terms</p>
+          ${state.matchTerms.map(t => `
+            <div class="match-tile ${state.matchMatched.includes(t.id) ? "matched" : ""} ${state.matchSelected.term === t.id ? "selected" : ""} ${state.matchWrong && state.matchSelected.term === t.id ? "wrong" : ""}"
+              data-type="term" data-id="${t.id}">
+              <strong>${escHtml(t.term)}</strong>
+            </div>`).join("")}
+        </div>
+        <div class="match-col">
+          <p class="match-col-label">Definitions</p>
+          ${state.matchDefs.map(d => `
+            <div class="match-tile ${state.matchMatched.includes(d.id) ? "matched" : ""} ${state.matchSelected.def === d.id ? "selected" : ""} ${state.matchWrong && state.matchSelected.def === d.id ? "wrong" : ""}"
+              data-type="def" data-id="${d.id}">
+              ${escHtml(d.def.slice(0, 90))}${d.def.length > 90 ? "…" : ""}
+            </div>`).join("")}
+        </div>
+      </div>
+    </div>`;
+
+  el.querySelectorAll(".match-tile:not(.matched)").forEach(tile => {
+    tile.addEventListener("click", () => {
+      const type = tile.dataset.type;
+      const id = +tile.dataset.id;
+      if (state.matchMatched.includes(id)) return;
+      const next = { ...state.matchSelected, [type]: id };
+      state.matchSelected = next;
+      state.matchWrong = null;
+
+      if (next.term !== null && next.def !== null) {
+        if (next.term === next.def) {
+          state.matchMatched = [...state.matchMatched, next.term];
+          state.matchSelected = { term: null, def: null };
+        } else {
+          state.matchWrong = true;
+          renderMatch();
+          setTimeout(() => {
+            state.matchSelected = { term: null, def: null };
+            state.matchWrong = null;
+            renderMatch();
+          }, 800);
+          return;
+        }
+      }
+      renderMatch();
+    });
+  });
+}
+
+// ─── WRITE / DEFINE ───────────────────────────────────────────────────────────
+function initWrite() {
+  state.writeTerms = shuffle([...ALL_TERMS]).slice(0, 10);
+  state.writeIdx = 0;
+  state.writeInput = "";
+  state.writeResult = null;
+  state.writeScores = [];
+}
+
+function scoreDefinition(userAnswer, correctDef) {
+  const normalize = s => s.toLowerCase().replace(/[^a-z0-9 ]/g, "").split(/\s+/).filter(Boolean);
+  const userWords = new Set(normalize(userAnswer));
+  const keyWords = normalize(correctDef).filter(w => w.length > 4);
+  if (keyWords.length === 0) return 0;
+  const matched = keyWords.filter(w => userWords.has(w)).length;
+  const ratio = matched / keyWords.length;
+  if (ratio >= 0.5) return 2;
+  if (ratio >= 0.25) return 1;
+  return 0;
+}
+
+function renderWrite() {
+  const el = document.getElementById("write-content");
+  if (state.writeTerms.length === 0) initWrite();
+
+  if (state.writeIdx < state.writeTerms.length) {
+    const term = state.writeTerms[state.writeIdx];
+    el.innerHTML = `
+      <div class="fade-up">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h2 style="font-size:16px;font-weight:600">Define the term</h2>
+          <span style="font-size:12px;color:var(--muted)">${state.writeIdx + 1} / ${state.writeTerms.length}</span>
+        </div>
+        <div class="card mb16" style="text-align:center;padding:28px">
+          <p style="font-size:22px;font-family:'Playfair Display',serif;color:var(--gold)">${escHtml(term.term)}</p>
+        </div>
+        <textarea id="write-textarea" rows="4" placeholder="Write your definition..." style="margin-bottom:12px">${escHtml(state.writeInput)}</textarea>
+        ${state.writeResult === null
+          ? `<button class="btn btn-primary" id="write-submit-btn" ${!state.writeInput.trim() ? "disabled" : ""}>Submit</button>`
+          : `<div class="fade-up">
+              <div class="card mb16" style="border-color:${state.writeResult === 2 ? "rgba(120,180,120,0.2)" : state.writeResult === 1 ? "rgba(196,185,154,0.2)" : "rgba(200,100,100,0.2)"}">
+                <p id="write-score-badge" style="color:${state.writeResult === 2 ? "var(--green)" : state.writeResult === 1 ? "var(--gold)" : "var(--red)"}">
+                  ${state.writeResult}/2 — ${state.writeResult === 2 ? "Excellent!" : state.writeResult === 1 ? "Mostly right" : "Review this one"}
+                </p>
+                <p style="font-size:12px;color:var(--muted);margin-bottom:8px">Full IB definition:</p>
+                <p style="font-size:13px;color:var(--subtle);line-height:1.6">${escHtml(term.def)}</p>
+              </div>
+              <button class="btn btn-primary" id="write-next-btn">Next →</button>
+            </div>`
+        }
+      </div>`;
+
+    const ta = document.getElementById("write-textarea");
+    if (ta) {
+      ta.addEventListener("input", () => {
+        state.writeInput = ta.value;
+        const sb = document.getElementById("write-submit-btn");
+        if (sb) sb.disabled = !ta.value.trim();
+      });
+    }
+    const sb = document.getElementById("write-submit-btn");
+    if (sb) sb.addEventListener("click", () => {
+      const score = scoreDefinition(state.writeInput, term.def);
+      state.writeResult = score;
+      state.writeScores.push(score);
+      renderWrite();
+    });
+    const nb = document.getElementById("write-next-btn");
+    if (nb) nb.addEventListener("click", () => {
+      state.writeIdx++;
+      state.writeInput = "";
+      state.writeResult = null;
+      renderWrite();
+    });
+    return;
+  }
+
+  // Results / start screen
+  const total = state.writeScores.reduce((a, b) => a + b, 0);
+  const hasPlayed = state.writeScores.length > 0;
+  el.innerHTML = `
+    <div class="center fade-up" style="padding:60px 0">
+      <p class="big-emoji">📝</p>
+      <h2 class="section-title">${hasPlayed ? `${total} / ${state.writeScores.length * 2}` : "Define Terms"}</h2>
+      <p class="section-sub">${hasPlayed ? "Great effort! Try another round." : "Write definitions from memory and get scored out of 2."}</p>
+      <button class="btn btn-primary" id="write-start-btn">${hasPlayed ? "New Round" : "Start"}</button>
+    </div>`;
+  document.getElementById("write-start-btn").addEventListener("click", () => {
+    initWrite(); renderWrite();
+  });
+}
+
+// ─── EMAIL REMINDERS ──────────────────────────────────────────────────────────
+function getUnlearnedTerms() { return ALL_TERMS.filter(t => !state.known[t.id]); }
+
+function buildEmailBody(session) {
+  const unlearnedTerms = getUnlearnedTerms();
+  const pick = shuffle(unlearnedTerms).slice(0, 8);
+  const kc = knownCount(), tc = totalCount();
+  const prog = Math.round((kc / tc) * 100);
+  const greetings = {
+    morning: ["Rise and revise,", "Morning grind,", "Good morning! Time to load up on econ,", "Wakey wakey —"],
+    evening: ["Evening review time,", "Wind down with some econ,", "Good evening! Quick revision before bed —", "Before you sleep —"],
+  };
+  const greeting = greetings[session][Math.floor(Math.random() * greetings[session].length)];
+  const lines = pick.map(t => `📌 ${t.term}\n   ${t.def}`).join("\n\n");
+  return `${greeting} here are 8 IB Economics terms to drill:\n\n${lines}\n\n---\nProgress: ${kc}/${tc} terms learnt (${prog}%)\nTerms remaining: ${unlearnedTerms.length}\n\nKeep going Remy 💪`;
+}
+
+function renderEmail() {
+  // Restore email address
+  document.getElementById("email-address").value = state.emailAddress;
+  // Update preview
+  document.getElementById("email-preview").textContent = buildEmailBody("morning").slice(0, 500) + "...";
+  // Log
+  renderEmailLog();
+}
+
+function renderEmailLog() {
+  const wrap = document.getElementById("email-log-wrap");
+  const logEl = document.getElementById("email-log");
+  if (state.emailLog.length === 0) { wrap.style.display = "none"; return; }
+  wrap.style.display = "block";
+  logEl.innerHTML = state.emailLog.map(e => `
+    <div class="log-entry">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:${e.session === "morning" ? "var(--amber)" : "var(--purple)"}">
+          ${e.session === "morning" ? "☀️" : "🌙"} ${e.session}
+        </span>
+        <span style="color:#4a4d5e">${e.time}</span>
+      </div>
+      <p style="color:var(--subtle);margin-top:3px">${escHtml(e.subject)}</p>
+      ${e.preview ? `<p style="color:#5a5d6e;margin-top:3px;font-size:11px">${escHtml(e.preview)}</p>` : ""}
+      <span style="font-size:10px;color:${e.status && e.status.includes("sent") ? "var(--green)" : "var(--muted)"}">● ${e.status}</span>
+    </div>
+  `).join("");
+}
+
+// Email save
+document.getElementById("email-save-btn").addEventListener("click", () => {
+  state.emailAddress = document.getElementById("email-address").value;
+  persist();
+  const btn = document.getElementById("email-save-btn");
+  btn.textContent = "✓ Saved";
+  setTimeout(() => { btn.textContent = "Save"; }, 2000);
+});
+
+// Send buttons
+async function sendTestEmail(session) {
+  const addr = document.getElementById("email-address").value;
+  if (!addr) { alert("Enter your email address first."); return; }
+  state.sendingEmail = true;
+  const btn = document.getElementById(session === "morning" ? "btn-morning" : "btn-evening");
+  if (btn) { btn.disabled = true; btn.textContent = "Sending..."; }
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "short" });
+  const subject = session === "morning"
+    ? `☀️ IB Econ Morning Revision — ${dateStr}`
+    : `🌙 IB Econ Evening Review — ${dateStr}`;
+  const body = buildEmailBody(session);
+
+  await new Promise(r => setTimeout(r, 1200));
+
+  state.emailLog.unshift({
+    time: now.toLocaleString("en-GB"),
+    session,
+    subject,
+    to: addr,
+    preview: body.slice(0, 120) + "...",
+    status: "sent (simulated)",
+  });
+  if (state.emailLog.length > 20) state.emailLog = state.emailLog.slice(0, 20);
+  state.sendingEmail = false;
+  persist();
+  updateProgress();
+  renderEmailLog();
+
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = session === "morning" ? "Send Now ☀️" : "Send Now 🌙";
+  }
+}
+
+document.getElementById("btn-morning").addEventListener("click", () => sendTestEmail("morning"));
+document.getElementById("btn-evening").addEventListener("click", () => sendTestEmail("evening"));
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+updateProgress();
+renderFlash();
+initMatch();
+initWrite();
+renderWrite();
+renderEmail();
+renderMatch();
 </script>
 </body>
 </html>
