@@ -21,6 +21,20 @@
     --red: #c8a0a0;
     --purple: #b09de0;
     --amber: #f5b84a;
+    --blue: #6bb6ff;
+    --orange: #ff9f43;
+    --pink: #ff6b9d;
+    --cyan: #4ecdc4;
+    --lime: #a4cb53;
+    --topic-micro: #6bb6ff;
+    --topic-macro: #a0c8a0;
+    --topic-global: #f5b84a;
+    --difficulty-easy: #a0c8a0;
+    --difficulty-medium: #f5b84a;
+    --difficulty-hard: #c8a0a0;
+    --importance-high: #c8a0a0;
+    --importance-medium: #f5b84a;
+    --importance-low: #a0c8a0;
   }
 
   html { scroll-behavior: smooth; }
@@ -49,7 +63,14 @@
     from { transform: rotateY(90deg); opacity: 0; }
     to   { transform: rotateY(0); opacity: 1; }
   }
-  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to   { transform: translateX(0); opacity: 1; }
+  }
+  @keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to   { transform: translateX(100%); opacity: 0; }
+  }
 
   .fade-up { animation: fadeUp 0.4s ease-out both; }
   .shake   { animation: shake 0.3s ease-in-out; }
@@ -83,6 +104,11 @@
   .progress-label { font-size: 13px; color: var(--muted); margin-bottom: 4px; text-align: right; }
   .progress-bar-wrap { width: 160px; height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
   .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold-dim), var(--gold)); border-radius: 3px; transition: width 0.5s ease; }
+  .progress-per-topic { display: flex; gap: 8px; margin-top: 8px; }
+  .topic-progress { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .topic-bar { width: 20px; height: 40px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; position: relative; }
+  .topic-fill { position: absolute; bottom: 0; width: 100%; transition: height 0.5s ease; }
+  .topic-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
 
   /* Tabs */
   #tabs-wrap {
@@ -121,6 +147,12 @@
   }
   .tab-btn:hover { color: var(--gold); background: rgba(196,185,154,0.06); }
   .tab-btn.active { color: var(--gold); background: rgba(196,185,154,0.1); }
+  .tab-btn[data-topic="Micro"] { --tab-color: var(--topic-micro); }
+  .tab-btn[data-topic="Macro"] { --tab-color: var(--topic-macro); }
+  .tab-btn[data-topic="Global"] { --tab-color: var(--topic-global); }
+  .tab-btn[data-topic="Micro"].active { color: var(--topic-micro); background: rgba(107, 182, 255, 0.1); }
+  .tab-btn[data-topic="Macro"].active { color: var(--topic-macro); background: rgba(160, 200, 160, 0.1); }
+  .tab-btn[data-topic="Global"].active { color: var(--topic-global); background: rgba(245, 184, 74, 0.1); }
 
   /* Content area */
   #content { padding: 20px 0 80px; }
@@ -187,7 +219,9 @@
     color: transparent;
     font-size: 12px;
   }
-  .check-btn.checked { background: rgba(196,185,154,0.2); border-color: var(--gold); color: var(--gold); }
+  .check-btn.checked { background: rgba(160, 200, 160, 0.2); border-color: var(--green); color: var(--green); }
+  .check-btn.learning { background: rgba(245, 184, 74, 0.2); border-color: var(--amber); color: var(--amber); }
+  .check-btn.mastered { background: rgba(107, 182, 255, 0.2); border-color: var(--blue); color: var(--blue); }
   .check-btn:hover { border-color: var(--gold); }
 
   /* Inputs */
@@ -215,17 +249,35 @@
     gap: 14px;
     align-items: flex-start;
     padding: 14px 16px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
   }
-  .term-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; transition: all 0.2s; }
+  .term-row:hover { background: rgba(255,255,255,0.02); }
+  .term-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; transition: all 0.2s; cursor: pointer; }
+  .term-name:hover { color: var(--gold); }
   .term-name.known { color: var(--muted); text-decoration: line-through; opacity: 0.6; }
   .term-def { font-size: 13px; color: #8a8d9e; line-height: 1.55; transition: opacity 0.2s; }
   .term-def.known { opacity: 0.4; }
+  .term-meta { display: flex; gap: 8px; margin-top: 6px; }
+  .term-tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .term-tag.difficulty-easy { background: rgba(160, 200, 160, 0.2); color: var(--difficulty-easy); }
+  .term-tag.difficulty-medium { background: rgba(245, 184, 74, 0.2); color: var(--difficulty-medium); }
+  .term-tag.difficulty-hard { background: rgba(200, 160, 160, 0.2); color: var(--difficulty-hard); }
+  .term-tag.importance-high { background: rgba(200, 160, 160, 0.2); color: var(--importance-high); }
+  .term-tag.importance-medium { background: rgba(245, 184, 74, 0.2); color: var(--importance-medium); }
+  .term-tag.importance-low { background: rgba(160, 200, 160, 0.2); color: var(--importance-low); }
+  .term-star { cursor: pointer; color: var(--muted); transition: color 0.2s; }
+  .term-star.starred { color: var(--amber); }
+  .term-star:hover { color: var(--amber); }
 
   /* Search */
   #search-wrap { margin-bottom: 16px; }
   #search-meta { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+  .search-filters { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .filter-btn { padding: 6px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: var(--muted); font-size: 12px; cursor: pointer; transition: all 0.2s; }
+  .filter-btn.active { background: var(--gold); color: var(--bg); border-color: var(--gold); }
+  .filter-btn:hover { border-color: var(--gold); }
 
-  /* Flashcard */
   #flashcard {
     cursor: pointer;
     max-width: 480px;
@@ -242,6 +294,7 @@
     text-align: center;
   }
   #flashcard.flipped { background: rgba(196,185,154,0.04); }
+  #flashcard.recall-mode { background: rgba(255,180,50,0.04); border-color: rgba(255,180,50,0.2); }
   #flash-counter { font-size: 12px; color: var(--muted); margin-bottom: 16px; text-align: center; }
   #flash-controls { display: flex; gap: 10px; justify-content: center; margin-top: 24px; }
 
@@ -381,7 +434,32 @@
       <h1>Key Terms</h1>
     </div>
     <div style="text-align:right">
-      <p class="progress-label"><span id="hdr-known">0</span> / <span id="hdr-total">0</span> learnt</p>
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px">
+        <button id="daily-challenge-btn" class="btn btn-sm" style="background:rgba(255,180,50,0.2);color:var(--amber);border:1px solid rgba(255,180,50,0.3)">🔥 Daily Challenge</button>
+        <button id="edit-mode-btn" class="btn btn-sm" style="background:rgba(255,255,255,0.05);color:var(--muted)">✏️ Edit Mode</button>
+        <p class="progress-label"><span id="hdr-topic">All</span>: <span id="hdr-known">0</span> / <span id="hdr-total">0</span> learnt | Est. time: <span id="hdr-time">0</span> min</p>
+      </div>
+      <div class="progress-per-topic">
+        <div class="topic-progress">
+          <div class="topic-bar">
+            <div class="topic-fill" id="micro-fill" style="background: var(--topic-micro); height: 0%"></div>
+          </div>
+          <span class="topic-label">Micro</span>
+        </div>
+        <div class="topic-progress">
+          <div class="topic-bar">
+            <div class="topic-fill" id="macro-fill" style="background: var(--topic-macro); height: 0%"></div>
+          </div>
+          <span class="topic-label">Macro</span>
+        </div>
+        <div class="topic-progress">
+          <div class="topic-bar">
+            <div class="topic-fill" id="global-fill" style="background: var(--topic-global); height: 0%"></div>
+          </div>
+          <span class="topic-label">Global</span>
+        </div>
+      </div>
+      <p class="progress-label">Streak: <span id="hdr-streak">0</span> days | XP: <span id="hdr-xp">0</span> | Level: <span id="hdr-level">1</span></p>
       <div class="progress-bar-wrap">
         <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
       </div>
@@ -391,10 +469,15 @@
   <!-- Tabs -->
   <div id="tabs-wrap">
     <div id="tabs">
-      <button class="tab-btn active" data-tab="terms">📖 Terms</button>
-      <button class="tab-btn" data-tab="daily">🎯 Daily 5</button>
+      <button class="tab-btn active" data-tab="terms" data-topic="all">📖 All</button>
+      <button class="tab-btn" data-tab="terms" data-topic="Micro">🔵 Micro</button>
+      <button class="tab-btn" data-tab="terms" data-topic="Macro">🟢 Macro</button>
+      <button class="tab-btn" data-tab="terms" data-topic="Global">🟡 Global</button>
+      <button class="tab-btn" data-tab="daily">🎯 SRS</button>
       <button class="tab-btn" data-tab="flash">🃏 Flashcards</button>
+      <button class="tab-btn" data-tab="practice">🎮 Practice</button>
       <button class="tab-btn" data-tab="match">🔗 Match</button>
+      <button class="tab-btn" data-tab="quiz">❓ Quiz</button>
       <button class="tab-btn" data-tab="write">✍️ Define</button>
       <button class="tab-btn" data-tab="email">📧 Reminders</button>
     </div>
@@ -407,6 +490,15 @@
     <div class="tab-panel active fade-up" id="panel-terms">
       <div id="search-wrap" class="mb16">
         <input type="text" id="search-input" placeholder="Search terms or definitions..." />
+        <div class="search-filters">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="unknown">Unknown</button>
+          <button class="filter-btn" data-filter="known">Known</button>
+          <button class="filter-btn" data-filter="starred">Starred</button>
+          <button class="filter-btn" data-filter="easy">Easy</button>
+          <button class="filter-btn" data-filter="medium">Medium</button>
+          <button class="filter-btn" data-filter="hard">Hard</button>
+        </div>
       </div>
       <p id="search-meta" class="mb16"></p>
       <div id="terms-list"></div>
@@ -424,6 +516,11 @@
         <div id="flashcard-inner"></div>
       </div>
       <div id="flash-controls"></div>
+    </div>
+
+    <!-- ═══ PRACTICE ═══ -->
+    <div class="tab-panel" id="panel-practice">
+      <div id="practice-content"></div>
     </div>
 
     <!-- ═══ MATCH ═══ -->
@@ -517,16 +614,16 @@
 <script>
 // ─── DATA ───────────────────────────────────────────────────────────────────
 const ALL_TERMS = [
-  { id: 1, term: "Abnormal profit", def: "Profit earned above normal profit; occurs when total revenue exceeds total costs, meaning price exceeds average total cost (P > ATC). Also called supernormal or economic profit." },
-  { id: 2, term: "Absolute advantage", def: "A country has an absolute advantage in producing a good when it can produce more output using the same quantity of resources (or the same output using fewer resources) than another country." },
-  { id: 3, term: "Absolute poverty", def: "A condition where individuals lack sufficient income to afford the minimum necessities for survival, typically defined by an internationally agreed poverty line such as the World Bank's $2.15/day threshold." },
-  { id: 4, term: "Abuse of market power", def: "Anti-competitive behaviour by a dominant firm, such as predatory pricing, exclusive dealing, or collusion, that harms competition and consumer welfare." },
-  { id: 5, term: "Actual growth", def: "An increase in real GDP resulting from the use of previously unemployed or underemployed resources, shown on a PPC diagram as movement from a point inside the curve toward the curve itself." },
-  { id: 6, term: "Administrative barriers", def: "Non-tariff trade protection measures such as burdensome customs procedures, health and safety inspections, and labelling requirements that raise the cost of imports and restrict trade." },
-  { id: 7, term: "Adverse selection", def: "A form of market failure arising from asymmetric information before a transaction, where higher-risk individuals are more likely to participate in a market (e.g. unhealthy people seeking insurance), driving up costs and potentially causing market collapse." },
-  { id: 8, term: "Aggregate demand", def: "The total spending on an economy's goods and services at different price levels, ceteris paribus. Composed of consumption (C), investment (I), government spending (G), and net exports (X − M). AD = C + I + G + (X − M)." },
-  { id: 9, term: "Aggregate demand curve", def: "A downward-sloping curve showing the inverse relationship between the price level and real GDP demanded. It slopes downward due to the wealth effect, interest rate effect, and international trade effect." },
-  { id: 10, term: "Aggregate supply", def: "The total quantity of goods and services that all firms in an economy are willing and able to produce at different price levels, ceteris paribus." },
+  { id: 1, term: "Abnormal profit", def: "Profit earned above normal profit; occurs when total revenue exceeds total costs, meaning price exceeds average total cost (P > ATC). Also called supernormal or economic profit.", topic: "Micro", difficulty: "Medium", importance: "High", examples: ["A monopoly firm charging high prices"], questions: ["Explain why abnormal profits attract new entrants"], synonyms: ["Supernormal profit"], related: [25, 181], diagrams: [], formulae: ["P > ATC"], mistakes: ["Confusing with normal profit"], evaluation: ["Pros: incentivizes innovation; Cons: leads to inequality"] },
+  { id: 2, term: "Absolute advantage", def: "A country has an absolute advantage in producing a good when it can produce more output using the same quantity of resources (or the same output using fewer resources) than another country.", topic: "Global", difficulty: "Easy", importance: "High", examples: ["US produces more cars than Mexico with same resources"], questions: ["Why does absolute advantage not guarantee gains from trade?"], synonyms: [], related: [52], diagrams: ["PPC showing absolute advantage"], formulae: [], mistakes: ["Thinking it's necessary for trade"], evaluation: ["Basis for specialization but comparative advantage is key"] },
+  { id: 3, term: "Absolute poverty", def: "A condition where individuals lack sufficient income to afford the minimum necessities for survival, typically defined by an internationally agreed poverty line such as the World Bank's $2.15/day threshold.", topic: "Macro", difficulty: "Easy", importance: "Medium", examples: ["Families unable to buy food"], questions: ["How does absolute poverty differ from relative poverty?"], synonyms: [], related: [226], diagrams: [], formulae: [], mistakes: ["Confusing with relative poverty"], evaluation: ["Needs targeted aid programs"] },
+  { id: 4, term: "Abuse of market power", def: "Anti-competitive behaviour by a dominant firm, such as predatory pricing, exclusive dealing, or collusion, that harms competition and consumer welfare.", topic: "Micro", difficulty: "Hard", importance: "Medium", examples: ["Microsoft bundling software"], questions: ["Evaluate government intervention in market power abuse"], synonyms: [], related: [48, 196], diagrams: [], formulae: [], mistakes: ["Thinking all large firms abuse power"], evaluation: ["Regulation needed but may stifle innovation"] },
+  { id: 5, term: "Actual growth", def: "An increase in real GDP resulting from the use of previously unemployed or underemployed resources, shown on a PPC diagram as movement from a point inside the curve toward the curve itself.", topic: "Macro", difficulty: "Medium", importance: "High", examples: ["Economy recovering from recession"], questions: ["Distinguish actual and potential growth"], synonyms: [], related: [93], diagrams: ["PPC inward to outward"], formulae: [], mistakes: ["Confusing with potential growth"], evaluation: ["Sustainable if not inflationary"] },
+  { id: 6, term: "Administrative barriers", def: "Non-tariff trade protection measures such as burdensome customs procedures, health and safety inspections, and labelling requirements that raise the cost of imports and restrict trade.", topic: "Global", difficulty: "Medium", importance: "Low", examples: ["EU food safety standards"], questions: ["How do administrative barriers protect domestic producers?"], synonyms: ["Non-tariff barriers"], related: [241], diagrams: [], formulae: [], mistakes: ["Thinking they are always bad"], evaluation: ["Can be justified for safety but often protectionist"] },
+  { id: 7, term: "Adverse selection", def: "A form of market failure arising from asymmetric information before a transaction, where higher-risk individuals are more likely to participate in a market (e.g. unhealthy people seeking insurance), driving up costs and potentially causing market collapse.", topic: "Micro", difficulty: "Hard", importance: "Medium", examples: ["Insurance markets"], questions: ["Explain how adverse selection leads to market failure"], synonyms: [], related: [17, 183], diagrams: [], formulae: [], mistakes: ["Confusing with moral hazard"], evaluation: ["Requires regulation like mandatory insurance"] },
+  { id: 8, term: "Aggregate demand", def: "The total spending on an economy's goods and services at different price levels, ceteris paribus. Composed of consumption (C), investment (I), government spending (G), and net exports (X − M). AD = C + I + G + (X − M).", topic: "Macro", difficulty: "Medium", importance: "High", examples: ["Increase in consumer confidence boosting AD"], questions: ["Explain the components of AD"], synonyms: [], related: [9, 61, 62], diagrams: ["AD curve"], formulae: ["AD = C + I + G + (X - M)"], mistakes: ["Forgetting net exports"], evaluation: ["Shifts affect inflation and growth"] },
+  { id: 9, term: "Aggregate demand curve", def: "A downward-sloping curve showing the inverse relationship between the price level and real GDP demanded. It slopes downward due to the wealth effect, interest rate effect, and international trade effect.", topic: "Macro", difficulty: "Medium", importance: "High", examples: ["Fall in interest rates shifting AD right"], questions: ["Why is the AD curve downward sloping?"], synonyms: [], related: [8], diagrams: ["AD-AS diagram"], formulae: [], mistakes: ["Thinking it's vertical"], evaluation: ["Policy shifts AD to stabilize economy"] },
+  { id: 10, term: "Aggregate supply", def: "The total quantity of goods and services that all firms in an economy are willing and able to produce at different price levels, ceteris paribus.", topic: "Macro", difficulty: "Medium", importance: "High", examples: ["Rise in oil prices shifting SRAS left"], questions: ["Distinguish SRAS and LRAS"], synonyms: [], related: [229, 161], diagrams: ["SRAS and LRAS"], formulae: [], mistakes: ["Confusing short and long run"], evaluation: ["Shifts affect price level and output"] },
   { id: 11, term: "Allocative efficiency", def: "Occurs when resources are allocated to produce the combination of goods and services most valued by society; achieved where marginal social benefit equals marginal social cost (MSB = MSC), or equivalently where P = MC in competitive markets." },
   { id: 12, term: "Allocative inefficiency", def: "The failure to achieve allocative efficiency; occurs when MSB ≠ MSC, meaning too much or too little of a good is produced relative to the socially optimal level, creating a welfare loss." },
   { id: 13, term: "Anchoring", def: "A behavioural bias where individuals rely too heavily on the first piece of information encountered (the 'anchor') when making decisions, even when that information is arbitrary or irrelevant." },
@@ -789,6 +886,7 @@ let state = {
   flashDeck: shuffle([...ALL_TERMS]),
   flashIdx: 0,
   flashFlipped: false,
+  recallMode: false,
   matchTerms: [],
   matchDefs: [],
   matchSelected: { term: null, def: null },
@@ -803,27 +901,63 @@ let state = {
   emailLog: [],
   sendingEmail: false,
   currentTab: "terms",
+  currentTopic: "all",
+  starred: {},
+  lastReviewed: {},
+  edited: {},
+  status: {},
+  streak: 0,
+  lastStudy: null,
+  xp: 0,
+  achievements: [],
+  editMode: false,
+  srsData: {},
+  practiceMode: "multiple-choice", // multiple-choice, fill-blank, matching
+  practiceTerms: [],
+  practiceIdx: 0,
+  practiceScore: 0, // Spaced repetition data: {termId: {interval: days, nextReview: timestamp, ease: factor}}
+  currentFilter: "all",
 };
 
 // Restore persisted state
 (function() {
   const saved = loadState();
   if (saved.known) state.known = saved.known;
+  if (saved.starred) state.starred = saved.starred;
+  if (saved.lastReviewed) state.lastReviewed = saved.lastReviewed;
+  if (saved.edited) state.edited = saved.edited;
+  if (saved.status) state.status = saved.status;
+  if (saved.streak) state.streak = saved.streak;
+  if (saved.lastStudy) state.lastStudy = saved.lastStudy;
+  if (saved.xp) state.xp = saved.xp;
+  if (saved.achievements) state.achievements = saved.achievements;
   if (saved.dailyHistory) state.dailyHistory = saved.dailyHistory;
   if (saved.dailySet) state.dailySet = saved.dailySet;
   if (saved.dailyPhase) state.dailyPhase = saved.dailyPhase;
   if (saved.emailAddress) state.emailAddress = saved.emailAddress;
   if (saved.emailLog) state.emailLog = saved.emailLog;
+  if (saved.editMode !== undefined) state.editMode = saved.editMode;
+  if (saved.srsData) state.srsData = saved.srsData;
 })();
 
 function persist() {
   saveState({
     known: state.known,
+    starred: state.starred,
+    lastReviewed: state.lastReviewed,
+    edited: state.edited,
+    status: state.status,
+    streak: state.streak,
+    lastStudy: state.lastStudy,
+    xp: state.xp,
+    achievements: state.achievements,
     dailyHistory: state.dailyHistory,
     dailySet: state.dailySet,
     dailyPhase: state.dailyPhase,
     emailAddress: state.emailAddress,
     emailLog: state.emailLog,
+    editMode: state.editMode,
+    srsData: state.srsData,
   });
 }
 
@@ -836,19 +970,134 @@ function escHtml(s) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 }
-function knownCount() { return Object.keys(state.known).filter(k => state.known[k]).length; }
-function totalCount() { return ALL_TERMS.length; }
-function progress() { return Math.round((knownCount() / totalCount()) * 100); }
+function updateStreak() {
+  const today = new Date().toDateString();
+  const lastStudy = state.lastStudy ? new Date(state.lastStudy).toDateString() : null;
+  if (lastStudy === today) return; // Already studied today
+  if (lastStudy === new Date(Date.now() - 86400000).toDateString()) {
+    state.streak++;
+  } else {
+    state.streak = 1;
+  }
+  state.lastStudy = Date.now();
+}
+
+function checkAchievements() {
+  const achievements = [];
+
+  // Study streak achievements
+  if (state.streak >= 7 && !state.achievements.includes("week_streak")) {
+    achievements.push({ id: "week_streak", name: "Week Warrior", desc: "7 day study streak!", icon: "🔥" });
+  }
+  if (state.streak >= 30 && !state.achievements.includes("month_streak")) {
+    achievements.push({ id: "month_streak", name: "Monthly Master", desc: "30 day study streak!", icon: "🏆" });
+  }
+
+  // Learning achievements
+  const learned = knownCount();
+  if (learned >= 50 && !state.achievements.includes("learned_50")) {
+    achievements.push({ id: "learned_50", name: "Knowledge Seeker", desc: "Learned 50 terms!", icon: "📚" });
+  }
+  if (learned >= 100 && !state.achievements.includes("learned_100")) {
+    achievements.push({ id: "learned_100", name: "Economics Expert", desc: "Learned 100 terms!", icon: "🎓" });
+  }
+
+  // XP achievements
+  if (state.xp >= 500 && !state.achievements.includes("xp_500")) {
+    achievements.push({ id: "xp_500", name: "XP Explorer", desc: "Earned 500 XP!", icon: "⭐" });
+  }
+  if (state.xp >= 1000 && !state.achievements.includes("xp_1000")) {
+    achievements.push({ id: "xp_1000", name: "XP Champion", desc: "Earned 1000 XP!", icon: "💎" });
+  }
+
+  // Topic mastery
+  const topics = ['Micro', 'Macro', 'Global'];
+  topics.forEach(topic => {
+    const topicTerms = ALL_TERMS.filter(t => t.topic === topic);
+    const learnedInTopic = topicTerms.filter(t => state.known[t.id]).length;
+    const achievementId = `master_${topic.toLowerCase()}`;
+    if (learnedInTopic >= topicTerms.length * 0.8 && !state.achievements.includes(achievementId)) {
+      achievements.push({
+        id: achievementId,
+        name: `${topic} Master`,
+        desc: `Learned 80% of ${topic} terms!`,
+        icon: topic === 'Micro' ? '🔵' : topic === 'Macro' ? '🟢' : '🟡'
+      });
+    }
+  });
+
+  // Add new achievements
+  achievements.forEach(achievement => {
+    state.achievements.push(achievement.id);
+    showAchievementNotification(achievement);
+  });
+
+  if (achievements.length > 0) {
+    persist();
+  }
+}
+
+function showAchievementNotification(achievement) {
+  const notification = document.createElement('div');
+  notification.className = 'achievement-notification fade-up';
+  notification.innerHTML = `
+    <div style="display:flex; align-items:center; gap:12px;">
+      <span style="font-size:24px">${achievement.icon}</span>
+      <div>
+        <p style="font-weight:600; margin:0">${achievement.name}</p>
+        <p style="font-size:12px; color:var(--muted); margin:0">${achievement.desc}</p>
+      </div>
+    </div>
+  `;
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    padding: 16px;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    animation: slideIn 0.5s ease-out;
+  `;
+
+  document.body.appendChild(notification);
+  setTimeout(() => {
+    notification.style.animation = 'slideOut 0.5s ease-in';
+    setTimeout(() => notification.remove(), 500);
+  }, 3000);
+}
 
 // ─── HEADER & PROGRESS ───────────────────────────────────────────────────────
-function updateProgress() {
-  const kc = knownCount(), tc = totalCount(), p = progress();
-  document.getElementById("hdr-known").textContent = kc;
-  document.getElementById("hdr-total").textContent = tc;
+function renderHeader() {
+  let known = state.currentTopic === "all" ? knownCount() : ALL_TERMS.filter(t => t.topic === state.currentTopic && state.known[t.id]).length;
+  let total = state.currentTopic === "all" ? totalCount() : ALL_TERMS.filter(t => t.topic === state.currentTopic).length;
+  let topicName = state.currentTopic === "all" ? "All" : state.currentTopic;
+  document.getElementById("hdr-topic").textContent = topicName;
+  document.getElementById("hdr-known").textContent = known;
+  document.getElementById("hdr-total").textContent = total;
+  let remaining = total - known;
+  document.getElementById("hdr-time").textContent = remaining * 3;
+  let p = total > 0 ? Math.round((known / total) * 100) : 0;
   document.getElementById("progress-fill").style.width = p + "%";
+  document.getElementById("progress-fill").className = "progress-bar-fill " + (state.currentTopic === "all" ? "" : state.currentTopic.toLowerCase());
+
+  // Per-topic progress
+  const topics = ['Micro', 'Macro', 'Global'];
+  topics.forEach(topic => {
+    const topicTerms = ALL_TERMS.filter(t => t.topic === topic);
+    const knownInTopic = topicTerms.filter(t => state.known[t.id]).length;
+    const progress = topicTerms.length > 0 ? Math.round((knownInTopic / topicTerms.length) * 100) : 0;
+    document.getElementById(topic.toLowerCase() + '-fill').style.height = progress + '%';
+  });
+
+  document.getElementById("hdr-streak").textContent = state.streak;
+  document.getElementById("hdr-xp").textContent = state.xp;
+  document.getElementById("hdr-level").textContent = Math.floor(state.xp / 100) + 1;
   // Email stats
-  document.getElementById("email-stat-known").textContent = `${kc}/${tc}`;
-  document.getElementById("email-stat-remaining").textContent = tc - kc;
+  document.getElementById("email-stat-known").textContent = `${knownCount()}/${totalCount()}`;
+  document.getElementById("email-stat-remaining").textContent = totalCount() - knownCount();
   document.getElementById("email-stat-sent").textContent = state.emailLog.length;
 }
 
@@ -856,63 +1105,322 @@ function updateProgress() {
 document.querySelectorAll(".tab-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     const tab = btn.dataset.tab;
+    const topic = btn.dataset.topic;
     document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
     document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
     document.getElementById("panel-" + tab).classList.add("active");
     state.currentTab = tab;
+    if (topic) state.currentTopic = topic;
+    else state.currentTopic = "all";
+    renderHeader();
+    if (tab === "terms") renderTerms();
     if (tab === "daily") renderDaily();
     if (tab === "flash") renderFlash();
+    if (tab === "practice") renderPractice();
     if (tab === "match") renderMatch();
+    if (tab === "quiz") renderQuiz();
     if (tab === "write") renderWrite();
     if (tab === "email") renderEmail();
   });
 });
 
+// ─── DAILY CHALLENGE ───────────────────────────────────────────────────────────
+document.getElementById("daily-challenge-btn").addEventListener("click", () => {
+  const challengeTerms = ALL_TERMS.filter(t => !state.known[t.id]).slice(0, 5);
+  if (challengeTerms.length === 0) {
+    alert("No unknown terms left! Great job! 🎉");
+    return;
+  }
+
+  let challengeScore = 0;
+  let challengeIdx = 0;
+
+  function showChallengeQuestion() {
+    if (challengeIdx >= challengeTerms.length) {
+      // Challenge complete
+      const percentage = Math.round((challengeScore / challengeTerms.length) * 100);
+      alert(`Challenge Complete! Score: ${challengeScore}/${challengeTerms.length} (${percentage}%)\n\nXP Earned: ${challengeScore * 10}`);
+      state.xp += challengeScore * 10;
+      renderHeader();
+      checkAchievements();
+      persist();
+      return;
+    }
+
+    const term = challengeTerms[challengeIdx];
+    const isMultipleChoice = Math.random() > 0.5;
+    
+    if (isMultipleChoice) {
+      const wrongOptions = shuffle(ALL_TERMS.filter(t => t.id !== term.id)).slice(0, 3);
+      const options = shuffle([term, ...wrongOptions]);
+      
+      const answer = prompt(`${challengeIdx + 1}/${challengeTerms.length}: What is the definition of "${term.term}"?\n\nOptions:\n${options.map((opt, i) => `${i + 1}. ${opt.def.slice(0, 100)}...`).join('\n')}\n\nEnter the number (1-4):`);
+      
+      if (answer && parseInt(answer) === options.findIndex(opt => opt.id === term.id) + 1) {
+        challengeScore++;
+        alert("Correct! ✅");
+      } else {
+        alert(`Incorrect. The correct answer was: ${term.def}`);
+      }
+    } else {
+      const answer = prompt(`${challengeIdx + 1}/${challengeTerms.length}: Define "${term.term}":`);
+      
+      if (answer && answer.toLowerCase().includes(term.term.toLowerCase().split(' ')[0])) {
+        challengeScore++;
+        alert("Correct! ✅");
+      } else {
+        alert(`Incorrect. The definition is: ${term.def}`);
+      }
+    }
+    
+    challengeIdx++;
+    showChallengeQuestion();
+  }
+
+  showChallengeQuestion();
+});
+
+// ─── EDIT MODE TOGGLE ──────────────────────────────────────────────────────────
+document.getElementById("edit-mode-btn").addEventListener("click", () => {
+  state.editMode = !state.editMode;
+  persist();
+  updateEditModeUI();
+  renderTerms(document.getElementById("search-input").value);
+});
+
+function updateEditModeUI() {
+  const btn = document.getElementById("edit-mode-btn");
+  if (state.editMode) {
+    btn.textContent = "✓ Edit Mode";
+    btn.style.background = "rgba(196, 185, 154, 0.2)";
+    btn.style.color = "var(--gold)";
+  } else {
+    btn.textContent = "✏️ Edit Mode";
+    btn.style.background = "rgba(255, 255, 255, 0.05)";
+    btn.style.color = "var(--muted)";
+  }
+}
+
+// ─── KEYBOARD SHORTCUTS ────────────────────────────────────────────────────────
+document.addEventListener("keydown", (e) => {
+  // Space bar for flashcards
+  if (e.code === "Space" && state.currentTab === "flash") {
+    e.preventDefault();
+    state.flashFlipped = !state.flashFlipped;
+    renderFlash();
+  }
+  // Arrow keys for flashcards
+  if (state.currentTab === "flash") {
+    if (e.code === "ArrowLeft" && state.flashIdx > 0) {
+      state.flashIdx--;
+      state.flashFlipped = false;
+      renderFlash();
+    }
+    if (e.code === "ArrowRight" && state.flashIdx < state.flashDeck.length - 1) {
+      state.flashIdx++;
+      state.flashFlipped = false;
+      renderFlash();
+    }
+  }
+  // Number keys for quiz options (will be implemented when quiz is updated)
+  if (state.currentTab === "quiz") {
+    const num = parseInt(e.key);
+    if (num >= 1 && num <= 4) {
+      e.preventDefault();
+      // selectQuizOption will be implemented
+    }
+  }
+});
+
 // ─── TERMS TAB ────────────────────────────────────────────────────────────────
 function renderTerms(query) {
-  const filtered = query
-    ? ALL_TERMS.filter(t => t.term.toLowerCase().includes(query.toLowerCase()) || t.def.toLowerCase().includes(query.toLowerCase()))
-    : ALL_TERMS;
+  let filtered = ALL_TERMS;
+
+  // Apply search filter
+  if (query) {
+    filtered = filtered.filter(t => 
+      t.term.toLowerCase().includes(query.toLowerCase()) || 
+      t.def.toLowerCase().includes(query.toLowerCase())
+    );
+  }
+
+  // Apply category filter
+  if (state.currentFilter === "unknown") {
+    filtered = filtered.filter(t => !state.known[t.id]);
+  } else if (state.currentFilter === "known") {
+    filtered = filtered.filter(t => state.known[t.id]);
+  } else if (state.currentFilter === "starred") {
+    filtered = filtered.filter(t => state.starred[t.id]);
+  } else if (state.currentFilter === "easy") {
+    filtered = filtered.filter(t => t.difficulty === "Easy");
+  } else if (state.currentFilter === "medium") {
+    filtered = filtered.filter(t => t.difficulty === "Medium");
+  } else if (state.currentFilter === "hard") {
+    filtered = filtered.filter(t => t.difficulty === "Hard");
+  }
 
   document.getElementById("search-meta").textContent =
-    filtered.length + " terms" + (query ? ` matching "${query}"` : "");
+    filtered.length + " terms" + (query ? ` matching "${query}"` : "") + 
+    (state.currentFilter !== "all" ? ` (${state.currentFilter})` : "");
 
   const list = document.getElementById("terms-list");
-  list.innerHTML = filtered.map((t, i) => `
-    <div class="card term-row fade-up" style="animation-delay:${Math.min(i*10,250)}ms">
-      <button class="check-btn ${state.known[t.id] ? "checked" : ""}" data-id="${t.id}" aria-label="Mark as known">✓</button>
-      <div style="flex:1;min-width:0">
-        <p class="term-name ${state.known[t.id] ? "known" : ""}">${escHtml(t.term)}</p>
-        <p class="term-def ${state.known[t.id] ? "known" : ""}">${escHtml(t.def)}</p>
-      </div>
-    </div>
-  `).join("");
+  list.innerHTML = filtered.map((t, i) => {
+    const editedTerm = state.edited[t.id]?.term || t.term;
+    const editedDef = state.edited[t.id]?.def || t.def;
+    const isEdited = state.edited[t.id] !== undefined;
+
+    // Determine checkbox state
+    let checkClass = "";
+    let checkSymbol = "✓";
+    if (state.known[t.id]) {
+      const srs = state.srsData[t.id];
+      if (srs && srs.interval > 30) {
+        checkClass = "mastered";
+        checkSymbol = "🏆";
+      } else if (srs && srs.interval > 7) {
+        checkClass = "checked";
+        checkSymbol = "✓";
+      } else {
+        checkClass = "learning";
+        checkSymbol = "📚";
+      }
+    }
+
+    if (state.editMode) {
+      return `
+        <div class="card term-row fade-up" style="animation-delay:${Math.min(i*10,250)}ms">
+          <div style="flex:1;min-width:0">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px">
+              <input type="text" class="edit-term-input" data-id="${t.id}" value="${escHtml(editedTerm)}" style="flex:1;font-size:14px;font-weight:600;border:none;background:rgba(255,255,255,0.05);color:var(--text);padding:4px 8px;border-radius:4px;" />
+              <span class="term-star ${state.starred[t.id] ? "starred" : ""}" data-id="${t.id}" title="Star this term">★</span>
+              ${isEdited ? '<span style="font-size:10px;color:var(--gold)">edited</span>' : ''}
+            </div>
+            <textarea class="edit-def-input" data-id="${t.id}" rows="2" style="width:100%;font-size:13px;border:none;background:rgba(255,255,255,0.05);color:#8a8d9e;padding:4px 8px;border-radius:4px;margin-bottom:8px;resize:vertical;">${escHtml(editedDef)}</textarea>
+            <div style="display:flex; gap:8px; align-items:center">
+              <button class="btn btn-primary btn-sm save-edit-btn" data-id="${t.id}">Save</button>
+              <button class="btn btn-sm reset-edit-btn" data-id="${t.id}" style="background:rgba(255,255,255,0.05);color:var(--muted)" ${!isEdited ? 'disabled' : ''}>Reset</button>
+              <div class="term-meta">
+                <span class="term-tag difficulty-${t.difficulty.toLowerCase()}">${t.difficulty}</span>
+                <span class="term-tag importance-${t.importance.toLowerCase()}">${t.importance}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      return `
+        <div class="card term-row fade-up" style="animation-delay:${Math.min(i*10,250)}ms">
+          <button class="check-btn ${checkClass}" data-id="${t.id}" aria-label="Mark as known">${checkSymbol}</button>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:3px">
+              <p class="term-name ${state.known[t.id] ? "known" : ""}">${escHtml(editedTerm)}</p>
+              <span class="term-star ${state.starred[t.id] ? "starred" : ""}" data-id="${t.id}" title="Star this term">★</span>
+              ${isEdited ? '<span style="font-size:10px;color:var(--gold)">edited</span>' : ''}
+            </div>
+            <p class="term-def ${state.known[t.id] ? "known" : ""}">${escHtml(editedDef)}</p>
+            <div class="term-meta">
+              <span class="term-tag difficulty-${t.difficulty.toLowerCase()}">${t.difficulty}</span>
+              <span class="term-tag importance-${t.importance.toLowerCase()}">${t.importance}</span>
+              ${state.lastReviewed[t.id] ? `<span class="term-tag" style="background:rgba(255,255,255,0.1);color:var(--muted)">Last: ${new Date(state.lastReviewed[t.id]).toLocaleDateString()}</span>` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  }).join("");
 
   list.querySelectorAll(".check-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       const id = +btn.dataset.id;
       state.known[id] = !state.known[id];
+      state.lastReviewed[id] = Date.now();
+      if (state.known[id]) {
+        state.xp += 10;
+        updateStreak();
+        checkAchievements();
+      }
       persist();
       updateProgress();
+      renderTerms(document.getElementById("search-input").value);
+      renderHeader();
+    });
+  });
+
+  list.querySelectorAll(".term-star").forEach(star => {
+    star.addEventListener("click", () => {
+      const id = +star.dataset.id;
+      state.starred[id] = !state.starred[id];
+      persist();
+      star.classList.toggle("starred");
+    });
+  });
+
+  // Edit mode event listeners
+  list.querySelectorAll(".save-edit-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = +btn.dataset.id;
+      const termInput = list.querySelector(`.edit-term-input[data-id="${id}"]`);
+      const defInput = list.querySelector(`.edit-def-input[data-id="${id}"]`);
+      if (termInput && defInput) {
+        state.edited[id] = {
+          term: termInput.value.trim(),
+          def: defInput.value.trim()
+        };
+        persist();
+        renderTerms(document.getElementById("search-input").value);
+      }
+    });
+  });
+
+  list.querySelectorAll(".reset-edit-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = +btn.dataset.id;
+      delete state.edited[id];
+      persist();
       renderTerms(document.getElementById("search-input").value);
     });
   });
 }
 
 document.getElementById("search-input").addEventListener("input", e => renderTerms(e.target.value));
+
+// Filter buttons
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    state.currentFilter = btn.dataset.filter;
+    renderTerms(document.getElementById("search-input").value);
+  });
+});
+
 renderTerms("");
 
 // ─── DAILY 5 ─────────────────────────────────────────────────────────────────
 function generateDaily() {
-  const available = ALL_TERMS.filter(t => !state.known[t.id] && !state.dailyHistory.includes(t.id));
-  const pool = available.length >= 5 ? available : ALL_TERMS.filter(t => !state.known[t.id]);
-  const selected = shuffle(pool).slice(0, 5);
+  const now = Date.now();
+  const dueTerms = ALL_TERMS.filter(t => {
+    const srs = state.srsData[t.id];
+    if (!srs) return true; // New terms
+    return srs.nextReview <= now; // Due for review
+  });
+
+  // Prioritize terms that are due, then new terms
+  const sortedTerms = dueTerms.sort((a, b) => {
+    const aSrs = state.srsData[a.id];
+    const bSrs = state.srsData[b.id];
+    if (!aSrs && !bSrs) return 0;
+    if (!aSrs) return -1; // New terms first
+    if (!bSrs) return 1;
+    return aSrs.nextReview - bSrs.nextReview; // Soonest due first
+  });
+
+  const selected = sortedTerms.slice(0, 8); // Increased to 8 for SRS
   state.dailySet = selected;
   state.dailyPhase = "learn";
   state.dailyQuizIdx = 0;
   state.dailyAnswers = {};
-  state.dailyHistory = [...state.dailyHistory, ...selected.map(t => t.id)];
   persist();
   renderDaily();
 }
@@ -923,9 +1431,9 @@ function renderDaily() {
     el.innerHTML = `
       <div class="center fade-up" style="padding:60px 0">
         <p class="big-emoji">🎯</p>
-        <h2 class="section-title">Daily 5</h2>
-        <p class="section-sub" style="max-width:360px;margin:0 auto 24px">Learn 5 new terms, then get quizzed on them. Terms you've already learnt won't appear.</p>
-        <button class="btn btn-primary" id="daily-start-btn">Start Today's 5</button>
+        <h2 class="section-title">Spaced Repetition</h2>
+        <p class="section-sub" style="max-width:360px;margin:0 auto 24px">Review terms using scientific spacing. Terms you know well appear less frequently, while challenging ones come up more often.</p>
+        <button class="btn btn-primary" id="daily-start-btn">Start SRS Session</button>
       </div>`;
     document.getElementById("daily-start-btn").addEventListener("click", generateDaily);
     return;
@@ -967,7 +1475,7 @@ function renderDaily() {
     el.innerHTML = `
       <div class="fade-up">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-          <h2 style="font-size:18px;font-weight:600">Quiz — ${state.dailyQuizIdx + 1}/5</h2>
+          <h2 style="font-size:18px;font-weight:600">Quiz — ${state.dailyQuizIdx + 1}/8</h2>
           <div class="quiz-dots">
             ${state.dailySet.map((_, i) => {
               let bg;
@@ -996,7 +1504,7 @@ function renderDaily() {
         </div>
         ${answered ? `
           <div class="center mt20">
-            ${state.dailyQuizIdx < 4
+            ${state.dailyQuizIdx < 7
               ? `<button class="btn btn-primary" id="daily-next-btn">Next →</button>`
               : `<button class="btn btn-primary" id="daily-results-btn">See Results</button>`}
           </div>` : ""}
@@ -1020,27 +1528,38 @@ function renderDaily() {
 
   // results
   const correct = Object.values(state.dailyAnswers).filter((a, i) => a === state.dailySet[i]?.id).length;
+  const total = state.dailySet.length;
+  const accuracy = correct / total;
+
+  // Update SRS data based on performance
+  state.dailySet.forEach((term, i) => {
+    const wasCorrect = state.dailyAnswers[i] === term.id;
+    updateSRS(term.id, wasCorrect);
+  });
+
   el.innerHTML = `
     <div class="fade-up center">
-      <p class="big-emoji">${correct >= 4 ? "🎉" : "📚"}</p>
-      <h2 class="section-title">${correct} / 5 correct</h2>
-      <p class="section-sub">Tick off the ones you know</p>
-      <div style="display:flex;flex-direction:column;gap:8px;text-align:left;margin-bottom:24px">
+      <p class="big-emoji">${accuracy >= 0.75 ? "🎉" : "📚"}</p>
+      <h2 class="section-title">${correct} / ${total} correct (${Math.round(accuracy * 100)}%)</h2>
+      <p class="section-sub">Great effort! SRS intervals updated.</p>
+      <div style="display:flex;flex-direction:column;gap:8px;text-align:left;margin-bottom:24px;max-width:400px;margin:0 auto">
         ${state.dailySet.map((t, i) => {
           const ok = state.dailyAnswers[i] === t.id;
+          const srs = state.srsData[t.id];
+          const interval = srs ? Math.round(srs.interval) : 1;
           return `
             <div class="card" style="display:flex;gap:14px;align-items:flex-start;border-color:${ok ? "rgba(120,180,120,0.2)" : "rgba(200,100,100,0.15)"}">
               <button class="check-btn ${state.known[t.id] ? "checked" : ""}" data-id="${t.id}">✓</button>
-              <div>
+              <div style="flex:1">
                 <p style="font-size:14px;font-weight:600;color:${ok ? "var(--green)" : "var(--red)"}">
                   ${ok ? "✓" : "✗"} ${escHtml(t.term)}
                 </p>
-                <p style="font-size:12px;color:var(--muted);margin-top:2px;line-height:1.5">${escHtml(t.def)}</p>
+                <p style="font-size:12px;color:var(--muted);margin-top:2px">Next review: ${interval} day${interval !== 1 ? 's' : ''}</p>
               </div>
             </div>`;
         }).join("")}
       </div>
-      <button class="btn btn-primary" id="daily-newset-btn">New Set of 5</button>
+      <button class="btn btn-primary" id="daily-newset-btn">New SRS Session</button>
     </div>`;
 
   el.querySelectorAll(".check-btn").forEach(btn => {
@@ -1067,27 +1586,41 @@ function renderFlash() {
   document.getElementById("flash-counter").textContent = `${idx + 1} / ${deck.length}`;
 
   const flashEl = document.getElementById("flashcard");
-  flashEl.className = flipped ? "flipped" : "";
+  flashEl.className = `flashcard ${flipped ? "flipped" : ""} ${state.recallMode ? "recall-mode" : ""}`;
   flashEl.onclick = () => { state.flashFlipped = !state.flashFlipped; renderFlash(); };
 
-  document.getElementById("flashcard-inner").innerHTML = !flipped
-    ? `<div style="animation:flipIn 0.3s ease">
-        <p style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Term</p>
+  if (state.recallMode && !flipped) {
+    // Active recall mode: show term, hide definition
+    document.getElementById("flashcard-inner").innerHTML = `
+      <div style="animation:flipIn 0.3s ease">
+        <p style="font-size:11px;color:var(--amber);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Active Recall</p>
         <p style="font-size:24px;font-family:'Playfair Display',serif;color:var(--text)">${escHtml(card.term)}</p>
-        <p style="font-size:12px;color:#4a4d5e;margin-top:16px">Tap to reveal</p>
-      </div>`
-    : `<div style="animation:flipIn 0.3s ease">
-        <p style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Definition</p>
-        <p style="font-size:14px;color:#c0c3d4;line-height:1.65">${escHtml(card.def)}</p>
+        <p style="font-size:12px;color:#4a4d5e;margin-top:16px">Think of the definition, then click to reveal</p>
       </div>`;
+  } else {
+    document.getElementById("flashcard-inner").innerHTML = !flipped
+      ? `<div style="animation:flipIn 0.3s ease">
+          <p style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Term</p>
+          <p style="font-size:24px;font-family:'Playfair Display',serif;color:var(--text)">${escHtml(card.term)}</p>
+          <p style="font-size:12px;color:#4a4d5e;margin-top:16px">Tap to reveal</p>
+        </div>`
+      : `<div style="animation:flipIn 0.3s ease">
+          <p style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">Definition</p>
+          <p style="font-size:14px;color:#c0c3d4;line-height:1.65">${escHtml(card.def)}</p>
+        </div>`;
+  }
 
   document.getElementById("flash-controls").innerHTML = `
     <button class="btn btn-primary btn-sm" id="flash-prev" ${idx === 0 ? "disabled" : ""} style="opacity:${idx === 0 ? 0.3 : 1}">← Prev</button>
+    <button class="btn btn-sm ${state.recallMode ? 'btn-primary' : ''}" id="flash-recall" style="${state.recallMode ? '' : 'background:rgba(255,255,255,0.04);color:var(--muted)'}">🧠 Recall</button>
     <button class="btn btn-sm" id="flash-shuffle" style="background:rgba(255,255,255,0.04);color:var(--muted)">Shuffle</button>
     <button class="btn btn-primary btn-sm" id="flash-next" ${idx >= deck.length - 1 ? "disabled" : ""} style="opacity:${idx >= deck.length - 1 ? 0.3 : 1}">Next →</button>
   `;
   document.getElementById("flash-prev").addEventListener("click", () => {
     state.flashIdx--; state.flashFlipped = false; renderFlash();
+  });
+  document.getElementById("flash-recall").addEventListener("click", () => {
+    state.recallMode = !state.recallMode; state.flashFlipped = false; renderFlash();
   });
   document.getElementById("flash-shuffle").addEventListener("click", () => {
     state.flashDeck = shuffle([...ALL_TERMS]); state.flashIdx = 0; state.flashFlipped = false; renderFlash();
@@ -1097,7 +1630,190 @@ function renderFlash() {
   });
 }
 
-// ─── MATCH ────────────────────────────────────────────────────────────────────
+// ─── PRACTICE MODES ───────────────────────────────────────────────────────────
+function initPractice() {
+  state.practiceTerms = shuffle([...ALL_TERMS]).slice(0, 10);
+  state.practiceIdx = 0;
+  state.practiceScore = 0;
+}
+
+function renderPractice() {
+  const el = document.getElementById("practice-content");
+
+  // Mode selection
+  if (!state.practiceTerms.length || state.practiceIdx >= state.practiceTerms.length) {
+    el.innerHTML = `
+      <div class="center fade-up" style="padding:60px 0">
+        <p class="big-emoji">🎮</p>
+        <h2 class="section-title">Practice Modes</h2>
+        <p class="section-sub" style="max-width:360px;margin:0 auto 24px">Choose a practice mode to test your knowledge</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:400px;margin:0 auto">
+          <button class="btn btn-primary practice-mode-btn" data-mode="multiple-choice">❓ Multiple Choice</button>
+          <button class="btn btn-primary practice-mode-btn" data-mode="fill-blank">📝 Fill Blank</button>
+          <button class="btn btn-primary practice-mode-btn" data-mode="matching">🔗 Matching</button>
+          <button class="btn btn-primary practice-mode-btn" data-mode="exam-style">📋 Exam Style</button>
+        </div>
+      </div>`;
+
+    el.querySelectorAll(".practice-mode-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        state.practiceMode = btn.dataset.mode;
+        initPractice();
+        renderPractice();
+      });
+    });
+    return;
+  }
+    // Results
+    const score = state.practiceScore;
+    const total = state.practiceTerms.length;
+    const percentage = Math.round((score / total) * 100);
+    el.innerHTML = `
+      <div class="center fade-up" style="padding:60px 0">
+        <p class="big-emoji">${percentage >= 80 ? "🎉" : percentage >= 60 ? "👍" : "📚"}</p>
+        <h2 class="section-title">Practice Complete!</h2>
+        <p class="section-sub">Score: ${score}/${total} (${percentage}%)</p>
+        <div class="stats-row" style="margin:24px 0">
+          <div class="stat-item">
+            <p class="stat-label">Accuracy</p>
+            <p class="stat-value">${percentage}%</p>
+          </div>
+          <div class="stat-item">
+            <p class="stat-label">XP Earned</p>
+            <p class="stat-value plain">${score * 5}</p>
+          </div>
+        </div>
+        <button class="btn btn-primary" id="practice-restart-btn">Practice Again</button>
+      </div>`;
+    document.getElementById("practice-restart-btn").addEventListener("click", () => {
+      initPractice();
+      renderPractice();
+    });
+    return;
+  }
+
+  const term = state.practiceTerms[state.practiceIdx];
+
+  if (state.practiceMode === "multiple-choice") {
+    const wrongOptions = shuffle(ALL_TERMS.filter(t => t.id !== term.id)).slice(0, 3);
+    const options = shuffle([term, ...wrongOptions]);
+
+    el.innerHTML = `
+      <div class="fade-up">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h2 style="font-size:16px;font-weight:600">Multiple Choice — ${state.practiceIdx + 1}/${state.practiceTerms.length}</h2>
+          <span style="font-size:12px;color:var(--muted)">Score: ${state.practiceScore}</span>
+        </div>
+        <div class="card mb16" style="text-align:center;padding:28px">
+          <p style="font-size:22px;font-family:'Playfair Display',serif;color:var(--gold)">${escHtml(term.term)}</p>
+        </div>
+        <div>
+          ${options.map(opt => `
+            <button class="quiz-option practice-option" data-correct="${opt.id === term.id}" data-termid="${term.id}">
+              ${escHtml(opt.def)}
+            </button>`).join("")}
+        </div>
+      </div>`;
+
+    el.querySelectorAll(".practice-option").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const isCorrect = btn.dataset.correct === "true";
+        if (isCorrect) {
+          state.practiceScore++;
+          state.xp += 5;
+          btn.style.borderColor = "var(--green)";
+          btn.style.background = "rgba(120, 180, 120, 0.1)";
+        } else {
+          btn.style.borderColor = "var(--red)";
+          btn.style.background = "rgba(200, 100, 100, 0.1)";
+          // Highlight correct answer
+          el.querySelector(`[data-correct="true"]`).style.borderColor = "var(--green)";
+          el.querySelector(`[data-correct="true"]`).style.background = "rgba(120, 180, 120, 0.1)";
+        }
+        setTimeout(() => {
+          state.practiceIdx++;
+          renderPractice();
+        }, 1500);
+      });
+    });
+
+  } else if (state.practiceMode === "fill-blank") {
+    el.innerHTML = `
+      <div class="fade-up">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h2 style="font-size:16px;font-weight:600">Fill in the Blank — ${state.practiceIdx + 1}/${state.practiceTerms.length}</h2>
+          <span style="font-size:12px;color:var(--muted)">Score: ${state.practiceScore}</span>
+        </div>
+        <div class="card mb16" style="text-align:center;padding:28px">
+          <p style="font-size:18px;color:var(--text)">Complete the definition:</p>
+          <p style="font-size:16px;color:var(--subtle);margin-top:12px">${escHtml(term.def.replace(term.term.toLowerCase(), "_____"))}</p>
+        </div>
+        <input type="text" id="fill-blank-input" placeholder="Enter the term..." style="margin-bottom:12px" />
+        <button class="btn btn-primary" id="fill-submit-btn">Submit</button>
+        <div id="fill-feedback" style="margin-top:12px"></div>
+      </div>`;
+
+    document.getElementById("fill-submit-btn").addEventListener("click", () => {
+      const input = document.getElementById("fill-blank-input").value.trim().toLowerCase();
+      const correct = term.term.toLowerCase();
+      const feedback = document.getElementById("fill-feedback");
+
+      if (input === correct) {
+        state.practiceScore++;
+        state.xp += 5;
+        feedback.innerHTML = '<p style="color:var(--green)">✓ Correct!</p>';
+      } else {
+        feedback.innerHTML = `<p style="color:var(--red)">✗ Incorrect. The answer is: <strong>${escHtml(term.term)}</strong></p>`;
+      }
+
+      setTimeout(() => {
+        state.practiceIdx++;
+        renderPractice();
+      }, 2000);
+    });
+
+  } else if (state.practiceMode === "matching") {
+    // Simplified matching for practice
+    const options = shuffle([term, ...shuffle(ALL_TERMS.filter(t => t.id !== term.id)).slice(0, 3)]);
+    el.innerHTML = `
+      <div class="fade-up">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h2 style="font-size:16px;font-weight:600">Match Term to Definition — ${state.practiceIdx + 1}/${state.practiceTerms.length}</h2>
+          <span style="font-size:12px;color:var(--muted)">Score: ${state.practiceScore}</span>
+        </div>
+        <div class="card mb16" style="text-align:center;padding:28px">
+          <p style="font-size:22px;font-family:'Playfair Display',serif;color:var(--gold)">${escHtml(term.term)}</p>
+        </div>
+        <div>
+          ${options.map(opt => `
+            <button class="quiz-option practice-option" data-correct="${opt.id === term.id}" data-termid="${term.id}">
+              ${escHtml(opt.def)}
+            </button>`).join("")}
+        </div>
+      </div>`;
+
+    el.querySelectorAll(".practice-option").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const isCorrect = btn.dataset.correct === "true";
+        if (isCorrect) {
+          state.practiceScore++;
+          state.xp += 5;
+          btn.style.borderColor = "var(--green)";
+          btn.style.background = "rgba(120, 180, 120, 0.1)";
+        } else {
+          btn.style.borderColor = "var(--red)";
+          btn.style.background = "rgba(200, 100, 100, 0.1)";
+          el.querySelector(`[data-correct="true"]`).style.borderColor = "var(--green)";
+          el.querySelector(`[data-correct="true"]`).style.background = "rgba(120, 180, 120, 0.1)";
+        }
+        setTimeout(() => {
+          state.practiceIdx++;
+          renderPractice();
+        }, 1500);
+      });
+    });
+  }
+}
 function initMatch() {
   const selected = shuffle([...ALL_TERMS]).slice(0, 6);
   state.matchTerms = shuffle(selected.map(t => ({ id: t.id, term: t.term })));
@@ -1366,6 +2082,7 @@ document.getElementById("btn-evening").addEventListener("click", () => sendTestE
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 updateProgress();
+updateEditModeUI();
 renderFlash();
 initMatch();
 initWrite();
