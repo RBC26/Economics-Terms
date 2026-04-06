@@ -615,15 +615,9 @@
   <!-- Tabs -->
   <div id="tabs-wrap">
     <div id="tabs">
-      <button class="tab-btn active" data-tab="terms" data-topic="all">All</button>
-      <button class="tab-btn" data-tab="terms" data-topic="Micro">Micro</button>
-      <button class="tab-btn" data-tab="terms" data-topic="Macro">Macro</button>
-      <button class="tab-btn" data-tab="terms" data-topic="Global">Global</button>
+      <button class="tab-btn active" data-tab="terms">All Terms</button>
       <button class="tab-btn" data-tab="daily">SRS</button>
-      <button class="tab-btn" data-tab="flash">Flashcards</button>
-      <button class="tab-btn" data-tab="practice">Practice</button>
-      <button class="tab-btn" data-tab="match">Match</button>
-      <button class="tab-btn" data-tab="quiz">Quiz</button>
+      <button class="tab-btn" data-tab="recap">Recap Games</button>
       <button class="tab-btn" data-tab="write">Define</button>
       <button class="tab-btn" data-tab="email">Reminders</button>
     </div>
@@ -635,7 +629,7 @@
     <!-- ═══ TERMS ═══ -->
     <div class="tab-panel active fade-up" id="panel-terms">
       <div id="search-wrap" class="mb16">
-        <input type="text" id="search-input" placeholder="Search terms or definitions..." />
+        <input type="text" id="search-input" placeholder="Search terms..." />
         <div class="search-filters">
           <button class="filter-btn active" data-filter="all">All</button>
           <button class="filter-btn" data-filter="unknown">Unknown</button>
@@ -652,33 +646,48 @@
       <div id="daily-content"></div>
     </div>
 
-    <!-- ═══ FLASHCARDS ═══ -->
-    <div class="tab-panel" id="panel-flash">
-      <p id="flash-counter"></p>
-      <div id="flashcard">
-        <div id="flashcard-inner"></div>
+    <!-- ═══ RECAP GAMES ═══ -->
+    <div class="tab-panel" id="panel-recap">
+      <div id="recap-subnav" style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap">
+        <button class="filter-btn active" data-game="flash">Flashcards</button>
+        <button class="filter-btn" data-game="practice">Practice</button>
+        <button class="filter-btn" data-game="match">Match</button>
+        <button class="filter-btn" data-game="quiz">Quiz</button>
       </div>
-      <div id="flash-controls"></div>
-    </div>
-
-    <!-- ═══ PRACTICE ═══ -->
-    <div class="tab-panel" id="panel-practice">
-      <div id="practice-content"></div>
-    </div>
-
-    <!-- ═══ MATCH ═══ -->
-    <div class="tab-panel" id="panel-match">
-      <div id="match-content"></div>
-    </div>
-
-    <!-- ═══ QUIZ ═══ -->
-    <div class="tab-panel" id="panel-quiz">
-      <div id="quiz-content"></div>
+      <!-- Flashcards -->
+      <div id="recap-flash-wrap">
+        <p id="flash-counter"></p>
+        <div id="flashcard">
+          <div id="flashcard-inner"></div>
+        </div>
+        <div id="flash-controls"></div>
+      </div>
+      <!-- Practice -->
+      <div id="recap-practice-wrap" style="display:none">
+        <div id="practice-content"></div>
+      </div>
+      <!-- Match -->
+      <div id="recap-match-wrap" style="display:none">
+        <div id="match-content"></div>
+      </div>
+      <!-- Quiz -->
+      <div id="recap-quiz-wrap" style="display:none">
+        <div id="quiz-content"></div>
+      </div>
     </div>
 
     <!-- ═══ WRITE / DEFINE ═══ -->
     <div class="tab-panel" id="panel-write">
-      <div id="write-content"></div>
+      <div id="write-subnav" style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap">
+        <button class="filter-btn active" data-writemode="free">Free Practice</button>
+        <button class="filter-btn" data-writemode="search">Search &amp; Define</button>
+      </div>
+      <div id="write-free-wrap">
+        <div id="write-content"></div>
+      </div>
+      <div id="write-search-wrap" style="display:none">
+        <div id="write-search-content"></div>
+      </div>
     </div>
 
     <!-- ═══ EMAIL REMINDERS ═══ -->
@@ -1272,6 +1281,14 @@ function escHtml(s) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 }
+// Returns term with any user edits applied, so all game modes use the edited version
+function getEffectiveTerm(t) {
+  if (!state.edited[t.id]) return t;
+  return { ...t, term: state.edited[t.id].term, def: state.edited[t.id].def };
+}
+function effectiveTerms() {
+  return ALL_TERMS.map(getEffectiveTerm);
+}
 function updateStreak() {
   const today = new Date().toDateString();
   const lastStudy = state.lastStudy ? new Date(state.lastStudy).toDateString() : null;
@@ -1449,28 +1466,63 @@ function animateCounter(elementId, targetValue) {
 }
 
 // ─── TABS ─────────────────────────────────────────────────────────────────────
+let currentRecapGame = "flash";
+let currentWriteMode = "free";
+
 document.querySelectorAll(".tab-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     const tab = btn.dataset.tab;
-    const topic = btn.dataset.topic;
     document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
     document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
     document.getElementById("panel-" + tab).classList.add("active");
     state.currentTab = tab;
-    if (topic) state.currentTopic = topic;
-    else state.currentTopic = "all";
+    state.currentTopic = "all";
     renderHeader();
     if (tab === "terms") renderTerms();
     if (tab === "daily") renderDaily();
-    if (tab === "flash") renderFlash();
-    if (tab === "practice") renderPractice();
-    if (tab === "match") renderMatch();
-    if (tab === "quiz") renderQuiz();
-    if (tab === "write") renderWrite();
+    if (tab === "recap") renderRecapGame(currentRecapGame);
+    if (tab === "write") renderWriteMode(currentWriteMode);
     if (tab === "email") renderEmail();
   });
 });
+
+// Recap Games sub-nav
+document.querySelectorAll("#recap-subnav .filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#recap-subnav .filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentRecapGame = btn.dataset.game;
+    renderRecapGame(currentRecapGame);
+  });
+});
+
+function renderRecapGame(game) {
+  ["flash","practice","match","quiz"].forEach(g => {
+    document.getElementById("recap-" + g + "-wrap").style.display = g === game ? "" : "none";
+  });
+  if (game === "flash") renderFlash();
+  if (game === "practice") renderPractice();
+  if (game === "match") renderMatch();
+  if (game === "quiz") renderQuiz();
+}
+
+// Write/Define sub-nav
+document.querySelectorAll("#write-subnav .filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#write-subnav .filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentWriteMode = btn.dataset.writemode;
+    renderWriteMode(currentWriteMode);
+  });
+});
+
+function renderWriteMode(mode) {
+  document.getElementById("write-free-wrap").style.display = mode === "free" ? "" : "none";
+  document.getElementById("write-search-wrap").style.display = mode === "search" ? "" : "none";
+  if (mode === "free") renderWrite();
+  if (mode === "search") renderWriteSearch();
+}
 
 // ─── DAILY CHALLENGE ───────────────────────────────────────────────────────────
 document.getElementById("daily-challenge-btn").addEventListener("click", () => {
@@ -1589,11 +1641,10 @@ function renderTerms(query) {
     filtered = filtered.filter(t => (TERM_TOPIC[t.id] || t.topic) === state.currentTopic);
   }
 
-  // Apply search filter
+  // Apply search filter — term names only, not definitions
   if (query) {
     filtered = filtered.filter(t =>
-      t.term.toLowerCase().includes(query.toLowerCase()) ||
-      t.def.toLowerCase().includes(query.toLowerCase())
+      (state.edited[t.id]?.term || t.term).toLowerCase().includes(query.toLowerCase())
     );
   }
 
@@ -1765,7 +1816,7 @@ renderTerms("");
 // ─── DAILY 5 ─────────────────────────────────────────────────────────────────
 function generateDaily() {
   const now = Date.now();
-  const dueTerms = ALL_TERMS.filter(t => {
+  const dueTerms = effectiveTerms().filter(t => {
     const srs = state.srsData[t.id];
     if (!srs) return true; // New terms
     return srs.nextReview <= now; // Due for review
@@ -1808,7 +1859,7 @@ function renderDaily() {
     el.innerHTML = `
       <div class="fade-up">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-          <h2 style="font-size:18px;font-weight:600">Learn these 5 terms</h2>
+          <h2 style="font-size:18px;font-weight:600">Learn these ${state.dailySet.length} terms</h2>
           <span style="font-size:12px;color:var(--muted)">Read carefully, then quiz yourself</span>
         </div>
         <div style="display:flex;flex-direction:column;gap:10px">
@@ -1833,7 +1884,7 @@ function renderDaily() {
 
   if (state.dailyPhase === "quiz") {
     const current = state.dailySet[state.dailyQuizIdx];
-    const wrongOptions = shuffle(ALL_TERMS.filter(t => t.id !== current.id)).slice(0, 3);
+    const wrongOptions = shuffle(effectiveTerms().filter(t => t.id !== current.id)).slice(0, 3);
     const options = shuffle([current, ...wrongOptions]);
     const answered = state.dailyAnswers[state.dailyQuizIdx] !== undefined;
 
@@ -1943,6 +1994,8 @@ function renderDaily() {
 
 // ─── FLASHCARDS ───────────────────────────────────────────────────────────────
 function renderFlash() {
+  // Always use effective (edited) terms in deck
+  state.flashDeck = state.flashDeck.map(t => getEffectiveTerm(t));
   const deck = state.flashDeck;
   const idx = state.flashIdx;
   const flipped = state.flashFlipped;
@@ -1988,7 +2041,7 @@ function renderFlash() {
     state.recallMode = !state.recallMode; state.flashFlipped = false; renderFlash();
   });
   document.getElementById("flash-shuffle").addEventListener("click", () => {
-    state.flashDeck = shuffle([...ALL_TERMS]); state.flashIdx = 0; state.flashFlipped = false; renderFlash();
+    state.flashDeck = shuffle(effectiveTerms()); state.flashIdx = 0; state.flashFlipped = false; renderFlash();
   });
   document.getElementById("flash-next").addEventListener("click", () => {
     state.flashIdx++; state.flashFlipped = false; renderFlash();
@@ -1997,7 +2050,7 @@ function renderFlash() {
 
 // ─── PRACTICE MODES ───────────────────────────────────────────────────────────
 function initPractice() {
-  state.practiceTerms = shuffle([...ALL_TERMS]).slice(0, 10);
+  state.practiceTerms = shuffle(effectiveTerms()).slice(0, 10);
   state.practiceIdx = 0;
   state.practiceScore = 0;
 }
@@ -2005,8 +2058,8 @@ function initPractice() {
 function renderPractice() {
   const el = document.getElementById("practice-content");
 
-  // Mode selection
-  if (!state.practiceTerms.length || state.practiceIdx >= state.practiceTerms.length) {
+  // Mode selection (no session started)
+  if (!state.practiceTerms.length) {
     el.innerHTML = `
       <div class="center fade-up" style="padding:60px 0">
         <p class="big-emoji">🎮</p>
@@ -2019,7 +2072,6 @@ function renderPractice() {
           <button class="btn btn-primary practice-mode-btn" data-mode="exam-style">📋 Exam Style</button>
         </div>
       </div>`;
-
     el.querySelectorAll(".practice-mode-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         state.practiceMode = btn.dataset.mode;
@@ -2029,7 +2081,9 @@ function renderPractice() {
     });
     return;
   }
-    // Results
+
+  // Results (all questions done)
+  if (state.practiceIdx >= state.practiceTerms.length) {
     const score = state.practiceScore;
     const total = state.practiceTerms.length;
     const percentage = Math.round((score / total) * 100);
@@ -2051,7 +2105,7 @@ function renderPractice() {
         <button class="btn btn-primary" id="practice-restart-btn">Practice Again</button>
       </div>`;
     document.getElementById("practice-restart-btn").addEventListener("click", () => {
-      initPractice();
+      state.practiceTerms = [];
       renderPractice();
     });
     return;
@@ -2060,7 +2114,7 @@ function renderPractice() {
   const term = state.practiceTerms[state.practiceIdx];
 
   if (state.practiceMode === "multiple-choice") {
-    const wrongOptions = shuffle(ALL_TERMS.filter(t => t.id !== term.id)).slice(0, 3);
+    const wrongOptions = shuffle(effectiveTerms().filter(t => t.id !== term.id)).slice(0, 3);
     const options = shuffle([term, ...wrongOptions]);
 
     el.innerHTML = `
@@ -2139,7 +2193,7 @@ function renderPractice() {
 
   } else if (state.practiceMode === "matching") {
     // Simplified matching for practice
-    const options = shuffle([term, ...shuffle(ALL_TERMS.filter(t => t.id !== term.id)).slice(0, 3)]);
+    const options = shuffle([term, ...shuffle(effectiveTerms().filter(t => t.id !== term.id)).slice(0, 3)]);
     el.innerHTML = `
       <div class="fade-up">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
@@ -2178,9 +2232,10 @@ function renderPractice() {
       });
     });
   }
+} // end renderPractice
 
 function initMatch() {
-  const selected = shuffle([...ALL_TERMS]).slice(0, 6);
+  const selected = shuffle(effectiveTerms()).slice(0, 6);
   state.matchTerms = shuffle(selected.map(t => ({ id: t.id, term: t.term })));
   state.matchDefs = shuffle(selected.map(t => ({ id: t.id, def: t.def })));
   state.matchMatched = [];
@@ -2259,7 +2314,7 @@ function renderMatch() {
 }
 
 function initQuiz() {
-  state.quizTerms = shuffle([...ALL_TERMS]).slice(0, 10);
+  state.quizTerms = shuffle(effectiveTerms()).slice(0, 10);
   state.quizIdx = 0;
   state.quizScore = 0;
   state.quizAnswers = {};
@@ -2303,7 +2358,7 @@ function renderQuiz() {
   }
 
   const term = state.quizTerms[state.quizIdx];
-  const wrongOptions = shuffle(ALL_TERMS.filter(t => t.id !== term.id && t.def)).slice(0, 3);
+  const wrongOptions = shuffle(effectiveTerms().filter(t => t.id !== term.id && t.def)).slice(0, 3);
   const options = shuffle([term, ...wrongOptions]);
 
   const dots = state.quizTerms.map((_, i) => {
@@ -2355,7 +2410,7 @@ function renderQuiz() {
 
 // ─── WRITE / DEFINE ───────────────────────────────────────────────────────────
 function initWrite() {
-  state.writeTerms = shuffle([...ALL_TERMS]).slice(0, 10);
+  state.writeTerms = shuffle(effectiveTerms()).slice(0, 10);
   state.writeIdx = 0;
   state.writeInput = "";
   state.writeResult = null;
@@ -2443,6 +2498,101 @@ function renderWrite() {
   document.getElementById("write-start-btn").addEventListener("click", () => {
     initWrite(); renderWrite();
   });
+}
+
+// ─── SEARCH & DEFINE ──────────────────────────────────────────────────────────
+let writeSearchState = { selected: null, result: null, input: "" };
+
+function renderWriteSearch() {
+  const el = document.getElementById("write-search-content");
+  if (!el) return;
+
+  // If a term is selected, show the define challenge
+  if (writeSearchState.selected) {
+    const t = writeSearchState.selected;
+    el.innerHTML = `
+      <div class="fade-up">
+        <button id="ws-back-btn" class="btn btn-sm mb16" style="background:rgba(255,255,255,0.04);color:var(--muted)">← Back to search</button>
+        <div class="card mb16" style="text-align:center;padding:28px">
+          <p style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">Define this term</p>
+          <p style="font-size:22px;font-family:'Playfair Display',serif;color:var(--gold)">${escHtml(t.term)}</p>
+        </div>
+        <textarea id="ws-textarea" rows="4" placeholder="Write your definition..." style="margin-bottom:12px">${escHtml(writeSearchState.input)}</textarea>
+        ${writeSearchState.result === null
+          ? `<button class="btn btn-primary" id="ws-submit-btn">Submit</button>`
+          : `<div class="fade-up">
+              <div class="card mb16" style="border-color:${writeSearchState.result === 2 ? "rgba(120,180,120,0.2)" : writeSearchState.result === 1 ? "rgba(196,185,154,0.2)" : "rgba(200,100,100,0.2)"}">
+                <p style="font-size:20px;font-weight:700;margin-bottom:6px;color:${writeSearchState.result === 2 ? "var(--green)" : writeSearchState.result === 1 ? "var(--gold)" : "var(--red)"}">
+                  ${writeSearchState.result}/2 — ${writeSearchState.result === 2 ? "Excellent!" : writeSearchState.result === 1 ? "Mostly right" : "Review this one"}
+                </p>
+                <p style="font-size:12px;color:var(--muted);margin-bottom:8px">Full IB definition:</p>
+                <p style="font-size:13px;color:var(--subtle);line-height:1.6">${escHtml(t.def)}</p>
+              </div>
+              <button class="btn btn-primary" id="ws-retry-btn">Try again</button>
+            </div>`
+        }
+      </div>`;
+    document.getElementById("ws-back-btn").addEventListener("click", () => {
+      writeSearchState = { selected: null, result: null, input: "" };
+      renderWriteSearch();
+    });
+    const ta = document.getElementById("ws-textarea");
+    if (ta) ta.addEventListener("input", () => { writeSearchState.input = ta.value; });
+    const sb = document.getElementById("ws-submit-btn");
+    if (sb) sb.addEventListener("click", () => {
+      writeSearchState.result = scoreDefinition(writeSearchState.input, t.def);
+      renderWriteSearch();
+    });
+    const rb = document.getElementById("ws-retry-btn");
+    if (rb) rb.addEventListener("click", () => {
+      writeSearchState.result = null; writeSearchState.input = "";
+      renderWriteSearch();
+    });
+    return;
+  }
+
+  // Search screen
+  el.innerHTML = `
+    <div class="fade-up">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Search for a term, then write its definition from memory.</p>
+      <input type="text" id="ws-search-input" placeholder="Search terms..." style="margin-bottom:16px" />
+      <div id="ws-results"></div>
+    </div>`;
+
+  const searchInput = document.getElementById("ws-search-input");
+  const resultsEl = document.getElementById("ws-results");
+
+  function doSearch(q) {
+    if (!q.trim()) { resultsEl.innerHTML = ""; return; }
+    const matches = effectiveTerms().filter(t =>
+      t.term.toLowerCase().startsWith(q.toLowerCase()) ||
+      t.term.toLowerCase().includes(q.toLowerCase())
+    ).sort((a, b) => {
+      const al = a.term.toLowerCase().startsWith(q.toLowerCase()) ? 0 : 1;
+      const bl = b.term.toLowerCase().startsWith(q.toLowerCase()) ? 0 : 1;
+      return al - bl;
+    }).slice(0, 12);
+
+    if (matches.length === 0) {
+      resultsEl.innerHTML = `<p style="font-size:13px;color:var(--muted)">No terms found.</p>`;
+      return;
+    }
+    resultsEl.innerHTML = matches.map(t => `
+      <div class="term-row ws-result-item" data-id="${t.id}" style="cursor:pointer;padding:12px 16px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);margin-bottom:6px;transition:all 0.2s">
+        <p style="font-size:14px;font-weight:600;color:var(--text)">${escHtml(t.term)}</p>
+      </div>`).join("");
+    resultsEl.querySelectorAll(".ws-result-item").forEach(item => {
+      item.addEventListener("mouseenter", () => item.style.borderColor = "rgba(196,185,154,0.3)");
+      item.addEventListener("mouseleave", () => item.style.borderColor = "rgba(255,255,255,0.06)");
+      item.addEventListener("click", () => {
+        const id = +item.dataset.id;
+        writeSearchState = { selected: effectiveTerms().find(t => t.id === id), result: null, input: "" };
+        renderWriteSearch();
+      });
+    });
+  }
+
+  searchInput.addEventListener("input", e => doSearch(e.target.value));
 }
 
 // ─── EMAIL REMINDERS ──────────────────────────────────────────────────────────
@@ -2544,12 +2694,11 @@ document.getElementById("btn-evening").addEventListener("click", () => sendTestE
 updateProgress();
 updateEditModeUI();
 renderTerms(); // Render terms by default since terms tab is active
-renderFlash();
+renderEmail();
+// Pre-init game data so panels render quickly when first opened
+state.flashDeck = shuffle(effectiveTerms());
 initMatch();
 initWrite();
-renderWrite();
-renderEmail();
-renderMatch();
 </script>
 </body>
 </html>
